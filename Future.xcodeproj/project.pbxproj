@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65AE34251C988C4200AC1DBA /* ContextSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AE34241C988C4200AC1DBA /* ContextSelector.swift */; };
 		65F0F6DD1C94A0F500E1E59B /* Future.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F0F6D21C94A0F400E1E59B /* Future.framework */; };
 		65F0F6E21C94A0F500E1E59B /* FutureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F6E11C94A0F500E1E59B /* FutureTests.swift */; };
 		65F0F6ED1C94A15900E1E59B /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F6EC1C94A15900E1E59B /* Future.swift */; };
@@ -67,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65AE34241C988C4200AC1DBA /* ContextSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextSelector.swift; sourceTree = "<group>"; };
 		65F0F6D21C94A0F400E1E59B /* Future.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Future.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65F0F6D71C94A0F400E1E59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65F0F6DC1C94A0F500E1E59B /* FutureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FutureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,6 +150,7 @@
 				65F0F7141C98767C00E1E59B /* MutableFuture.swift */,
 				65F0F7121C98766B00E1E59B /* Promise.swift */,
 				65F0F7161C98769300E1E59B /* TaskChain.swift */,
+				65AE34241C988C4200AC1DBA /* ContextSelector.swift */,
 				65F0F7181C9876EA00E1E59B /* Error.swift */,
 				65F0F71A1C98776E00E1E59B /* Result+.swift */,
 			);
@@ -303,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65F0F71B1C98776E00E1E59B /* Result+.swift in Sources */,
+				65AE34251C988C4200AC1DBA /* ContextSelector.swift in Sources */,
 				65F0F71D1C987CE600E1E59B /* Future+Functional.swift in Sources */,
 				65F0F7171C98769300E1E59B /* TaskChain.swift in Sources */,
 				65F0F6ED1C94A15900E1E59B /* Future.swift in Sources */,
@@ -517,6 +521,7 @@
 				65F0F6E81C94A0F500E1E59B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		65F0F6E91C94A0F500E1E59B /* Build configuration list for PBXNativeTarget "FutureTests" */ = {
 			isa = XCConfigurationList;
@@ -525,6 +530,7 @@
 				65F0F6EB1C94A0F500E1E59B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

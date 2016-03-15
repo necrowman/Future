@@ -104,7 +104,7 @@ public class Future<V> : FutureType {
     }
 }
 
-public func future<T>(context:ExecutionContextType, task:() throws ->T) -> Future<T> {
+public func future<T>(context:ExecutionContextType = contextSelector(continuation: false), task:() throws ->T) -> Future<T> {
     let future = MutableFuture<T>()
     
     context.execute {

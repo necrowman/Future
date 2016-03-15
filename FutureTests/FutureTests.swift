@@ -32,41 +32,41 @@ class FutureTests: XCTestCase {
     }
     
     func testExample() {
-        let f = future(global) {
+        let f = future {
             return "716"
         }
         
-        f.onComplete(immediate) { (result:Result<String, NoError>) in
+        f.onComplete { (result:Result<String, NoError>) in
             print("1:", result.value!)
         }
         
-        f.onComplete(immediate) { (result:Result<String, AnyError>) in
+        f.onComplete { (result:Result<String, AnyError>) in
             print("2:", result.value!)
         }
         
-        let f2:Future<String> = future(global) {
+        let f2:Future<String> = future {
             throw TestError.Recoverable
         }
         
-        f2.onComplete(immediate) { (result:Result<String, NoError>) in
+        f2.onComplete { (result:Result<String, NoError>) in
             print("SHOULD NOT PRINT")
         }
         
-        f2.onComplete(immediate) { (result:Result<String, AnyError>) in
+        f2.onComplete { (result:Result<String, AnyError>) in
             print("Any:", result.error!.error)
         }
         
-        f2.onComplete(immediate) { (result:Result<String, TestError>) in
+        f2.onComplete { (result:Result<String, TestError>) in
             print("Typed:", result.error!)
         }
         
-        f2.onFailure(immediate) { (e:TestError) in
+        f2.onFailure { (e:TestError) in
             print("EEEE!!!!EEEE:", e)
         }
         
-        f.flatMap(immediate) { value in
+        f.flatMap { value in
             Int(value)
-        }.onSuccess(immediate) { value in
+        }.onSuccess { value in
             print("!@#$%^&OUR INT:", value)
         }
         

@@ -21,7 +21,11 @@ import Boilerplate
 import ExecutionContext
 
 public extension FutureType {
-    public func onSuccess(context: ExecutionContextType, f: Value -> Void) {
+    public func onComplete<E: ErrorType>(callback: Result<Value, E> -> Void) -> Self {
+        return onComplete(contextSelector(continuation: true), callback: callback)
+    }
+    
+    public func onSuccess(context: ExecutionContextType = contextSelector(continuation: true), f: Value -> Void) {
         self.onComplete(context) { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 f(value)
@@ -29,7 +33,7 @@ public extension FutureType {
         }
     }
     
-    public func onFailure<E : ErrorType>(context: ExecutionContextType, f: E -> Void) {
+    public func onFailure<E : ErrorType>(context: ExecutionContextType = contextSelector(continuation: true), f: E -> Void) {
         self.onComplete(context) { (result:Result<Value, E>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error)
@@ -39,7 +43,7 @@ public extension FutureType {
 }
 
 public extension FutureType {
-    public func map<B>(context:ExecutionContextType, f:(Value) throws -> B) -> Future<B> {
+    public func map<B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) throws -> B) -> Future<B> {
         let future = MutableFuture<B>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
@@ -54,7 +58,7 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B, F : FutureType where F.Value == B>(context:ExecutionContextType, f:(Value) -> F) -> Future<B> {
+    public func flatMap<B, F : FutureType where F.Value == B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> F) -> Future<B> {
         let future = MutableFuture<B>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
@@ -71,7 +75,7 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B>(context:ExecutionContextType, f:(Value) -> B?) -> Future<B> {
+    public func flatMap<B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> B?) -> Future<B> {
         let future = MutableFuture<B>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
