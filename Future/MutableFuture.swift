@@ -18,6 +18,7 @@ import Foundation
 
 import Result
 import Boilerplate
+import ExecutionContext
 
 public protocol MutableFutureType {
     typealias Value
@@ -60,6 +61,12 @@ public extension MutableFutureType {
     func fail(error:ErrorType) throws {
         if !tryFail(error) {
             throw Error.AlreadyCompleted
+        }
+    }
+    
+    func completeWith<F: FutureType where F.Value == Value>(context:ExecutionContextType = contextSelector(continuation: false), f:F) {
+        f.onComplete(context) { (result:Result<Value, AnyError>) in
+            try! self.complete(result)
         }
     }
 }

@@ -118,3 +118,24 @@ public func future<T>(context:ExecutionContextType = contextSelector(continuatio
     
     return future
 }
+
+public func future<T, E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: false), task:() -> Result<T, E>) -> Future<T> {
+    let future = MutableFuture<T>()
+    
+    context.execute {
+        let result = task()
+        try! future.complete(result)
+    }
+    
+    return future
+}
+
+public func future<T, F : FutureType where F.Value == T>(context:ExecutionContextType = contextSelector(continuation: false), task:() -> F) -> Future<T> {
+    let future = MutableFuture<T>()
+    
+    context.execute {
+        future.completeWith(f: task())
+    }
+    
+    return future
+}
