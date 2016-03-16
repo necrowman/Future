@@ -64,9 +64,11 @@ public extension MutableFutureType {
         }
     }
     
+    
+    /// safe to be called several times
     func completeWith<F: FutureType where F.Value == Value>(context:ExecutionContextType = contextSelector(continuation: false), f:F) {
         f.onComplete(context) { (result:Result<Value, AnyError>) in
-            try! self.complete(result)
+            self.tryComplete(result)
         }
     }
 }

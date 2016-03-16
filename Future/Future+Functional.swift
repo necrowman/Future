@@ -40,6 +40,14 @@ public extension FutureType {
             })
         }
     }
+    
+    public func onFailure(context: ExecutionContextType = contextSelector(continuation: true), f: ErrorType -> Void) {
+        self.onComplete(context) { (result:Result<Value, AnyError>) in
+            result.analysis(ifSuccess: {_ in}, ifFailure: {error in
+                f(error.error)
+            })
+        }
+    }
 }
 
 public extension FutureType {
@@ -75,6 +83,21 @@ public extension FutureType {
         return future
     }
     
+    public func flatMap<B, E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> Result<B, E>) -> Future<B> {
+        let future = MutableFuture<B>()
+        
+        self.onComplete(context) { (result:Result<Value, AnyError>) in
+            result.analysis(ifSuccess: { value in
+                let b = f(value)
+                try! future.complete(b)
+            }, ifFailure: { error in
+                try! future.fail(error)
+            })
+        }
+        
+        return future
+    }
+    
     public func flatMap<B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> B?) -> Future<B> {
         let future = MutableFuture<B>()
         
@@ -86,6 +109,80 @@ public extension FutureType {
                 return Result(value: b)
             }
             try! future.complete(result)
+        }
+        
+        return future
+    }
+    
+    public func recover<E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) throws ->Value) -> Future<Value> {
+        let future = MutableFuture<Value>()
+        
+        self.onComplete(context) { (result:Result<Value, E>) in
+            let result = result.flatMapError { error in
+                return materializeAny {
+                    try f(error)
+                }
+            }
+            future.tryComplete(result)
+        }
+        
+        // if first one didn't match this one will be called next
+        future.completeWith(context, f:self)
+        
+        return future
+    }
+    
+    public func recover(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorType) throws ->Value) -> Future<Value> {
+        let future = MutableFuture<Value>()
+        
+        self.onComplete(context) { (result:Result<Value, AnyError>) in
+            let result = result.flatMapError { error in
+                return materializeAny {
+                    try f(error.error)
+                }
+            }
+            future.tryComplete(result)
+        }
+        
+        // if first one didn't match this one will be called next
+        future.completeWith(context, f:self)
+        
+        return future
+    }
+    
+    public func recoverWith<E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) -> Future<Value>) -> Future<Value> {
+        let future = MutableFuture<Value>()
+        
+        self.onComplete(context) { (result:Result<Value, AnyError>) in
+            guard let mapped:Result<Value, E> = result.tryAsError() else {
+                try! future.complete(result)
+                return
+            }
+            
+            mapped.analysis(ifSuccess: { _ in
+                try! future.complete(result)
+            }, ifFailure: { e in
+                future.completeWith(immediate, f:f(e))
+            })
+        }
+        
+        return future
+    }
+    
+    public func recoverWith(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorType) -> Future<Value>) -> Future<Value> {
+        let future = MutableFuture<Value>()
+        
+        self.onComplete(context) { (result:Result<Value, AnyError>) in
+            guard let mapped:Result<Value, AnyError> = result.tryAsError() else {
+                try! future.complete(result)
+                return
+            }
+            
+            mapped.analysis(ifSuccess: { _ in
+                try! future.complete(result)
+                }, ifFailure: { e in
+                    future.completeWith(immediate, f:f(e.error))
+            })
         }
         
         return future

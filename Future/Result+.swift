@@ -41,3 +41,23 @@ internal extension Result {
         }
     }
 }
+
+protocol AnyErrorType {
+    var error:ErrorType {get}
+}
+
+extension AnyError : AnyErrorType {
+}
+
+internal extension Result where Error : AnyErrorType {
+    func tryAsError<E : ErrorType>() -> Result<T, E>? {
+        return self.tryMapError { e -> E? in
+            switch e {
+            case let e as E:
+                return e
+            default:
+                return e.error as? E
+            }
+        }
+    }
+}

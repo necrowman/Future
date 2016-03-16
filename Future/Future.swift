@@ -76,14 +76,7 @@ public class Future<V> : FutureType {
         
         chain.append { next in
             return {
-                let mapped = self.result!.tryMapError { e -> E? in
-                    switch e {
-                    case let e as E:
-                        return e
-                    default:
-                        return e.error as? E
-                    }
-                }
+                let mapped:Result<Value, E>? = self.result!.tryAsError()
                 
                 let context = Future.selectContext(context)
                 

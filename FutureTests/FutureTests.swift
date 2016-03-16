@@ -70,6 +70,38 @@ class FutureTests: XCTestCase {
             print("!@#$%^&OUR INT:", value)
         }
         
+        let f3 = f2.recover { e in
+            return "recovered"
+        }
+        
+        let f4 = f2.recover { (e:TestError) in
+            return "678"
+        }
+        
+        let f5 = f2.recoverWith { e in
+            return future {
+                return "819"
+            }
+        }
+        
+        f3.flatMap { str in
+            return Int(str)
+        }.onFailure { (e:Error) in
+            print("recovered 3:", e)
+        }
+        
+        f4.flatMap { str in
+            return Int(str)
+        }.onSuccess { value in
+            print("recovered 4:", value)
+        }
+        
+        f5.flatMap { str in
+            return Int(str)
+        }.onSuccess { value in
+            print("recovered 5:", value)
+        }
+        
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
