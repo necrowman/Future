@@ -27,19 +27,29 @@ public protocol FutureType {
     init<E : ErrorType>(result:Result<Value, E>)
     
     func onComplete<E: ErrorType>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self
+    
+    var isCompleted:Bool {get}
 }
 
 public class Future<V> : FutureType {
     public typealias Value = V
     
     private let chain:TaskChain
-    internal var result:Result<Value, AnyError>? {
+    internal var result:Result<Value, AnyError>? = nil {
         didSet {
             if result != nil {
+                chain.append { next in
+                    return {
+                        self.isCompleted = true
+                        next.content?()
+                    }
+                }
                 chain.perform()
             }
         }
     }
+    
+    private (set) public var isCompleted:Bool = false
     
     internal init() {
         self.chain = TaskChain()
@@ -56,6 +66,7 @@ public class Future<V> : FutureType {
     public required convenience init<E : ErrorType>(result:Result<Value, E>) {
         self.init()
         self.result = result.asAnyError()
+        self.isCompleted = true
     }
     
     private static func selectContext(context: ExecutionContextType) -> ExecutionContextType {
@@ -74,20 +85,32 @@ public class Future<V> : FutureType {
     
     public func onComplete<E: ErrorType>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self {
         
-        chain.append { next in
-            return {
+        let context = Future.selectContext(context)
+        
+        admin.execute {
+            
+            if self.isCompleted {
                 let mapped:Result<Value, E>? = self.result!.tryAsError()
-                
-                let context = Future.selectContext(context)
-                
                 if let result = mapped {
                     context.execute {
                         callback(result)
-                        next.content?()
                     }
-                } else {
-                    context.execute {
-                        next.content?()
+                }
+            } else {
+                self.chain.append { next in
+                    return {
+                        let mapped:Result<Value, E>? = self.result!.tryAsError()
+                        
+                        if let result = mapped {
+                            context.execute {
+                                callback(result)
+                                next.content?()
+                            }
+                        } else {
+                            context.execute {
+                                next.content?()
+                            }
+                        }
                     }
                 }
             }

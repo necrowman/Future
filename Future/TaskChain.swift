@@ -19,7 +19,7 @@ import Foundation
 import Boilerplate
 import ExecutionContext
 
-private let admin = ExecutionContext(kind: .Serial)
+internal let admin = ExecutionContext(kind: .Serial)
 
 internal class TaskChain {
     private let head:SafeTask

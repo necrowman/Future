@@ -84,6 +84,10 @@ class FutureTests: XCTestCase {
             }
         }
         
+        let f6 = f2.recoverWith { e in
+            return Future(value: "347")
+        }
+        
         f3.flatMap { str in
             return Int(str)
         }.onFailure { (e:Error) in
@@ -101,6 +105,17 @@ class FutureTests: XCTestCase {
         }.onSuccess { value in
             print("recovered 5:", value)
         }
+        
+        let exp = self.expectationWithDescription("6")
+        
+        f6.flatMap { str in
+            return Int(str)
+        }.onSuccess { value in
+            print("recovered 6:", value)
+            exp.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(2, handler: nil)
         
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
