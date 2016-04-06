@@ -1,1 +1,2 @@
 github "crossroadlabs/ExecutionContext" "develop"
+github "crossroadlabs/XCTest3" "master"

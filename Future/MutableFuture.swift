@@ -21,13 +21,13 @@ import Boilerplate
 import ExecutionContext
 
 public protocol MutableFutureType {
-    typealias Value
+    associatedtype Value
     
-    func tryComplete<E : ErrorType>(result:Result<Value, E>) -> Bool
+    func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool
 }
 
 internal class MutableFuture<V> : Future<V>, MutableFutureType {
-    internal func tryComplete<E : ErrorType>(result:Result<Value, E>) -> Bool {
+    internal func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
         if self.result != nil {
             return false
         }
@@ -38,7 +38,7 @@ internal class MutableFuture<V> : Future<V>, MutableFutureType {
 }
 
 public extension MutableFutureType {
-    func complete<E : ErrorType>(result:Result<Value, E>) throws {
+    func complete<E : ErrorProtocol>(result:Result<Value, E>) throws {
         if !tryComplete(result) {
             throw Error.AlreadyCompleted
         }
@@ -54,11 +54,11 @@ public extension MutableFutureType {
         }
     }
     
-    func tryFail(error:ErrorType) -> Bool {
+    func tryFail(error:ErrorProtocol) -> Bool {
         return tryComplete(Result(error: anyError(error)))
     }
     
-    func fail(error:ErrorType) throws {
+    func fail(error:ErrorProtocol) throws {
         if !tryFail(error) {
             throw Error.AlreadyCompleted
         }

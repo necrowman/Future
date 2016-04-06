@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-
+import Boilerplate
 import Result
 
 public class Promise<V> : MutableFutureType {
@@ -33,7 +33,7 @@ public class Promise<V> : MutableFutureType {
         _future = MutableFuture()
     }
     
-    public func tryComplete<E : ErrorType>(result:Result<Value, E>) -> Bool {
+    public func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
         return _future.tryComplete(result)
     }
 }
