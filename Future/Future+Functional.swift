@@ -21,7 +21,7 @@ import Boilerplate
 import ExecutionContext
 
 public extension FutureType {
-    public func onComplete<E: ErrorType>(callback: Result<Value, E> -> Void) -> Self {
+    public func onComplete<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self {
         return onComplete(contextSelector(continuation: true), callback: callback)
     }
     
@@ -33,7 +33,7 @@ public extension FutureType {
         }
     }
     
-    public func onFailure<E : ErrorType>(context: ExecutionContextType = contextSelector(continuation: true), f: E -> Void) {
+    public func onFailure<E : ErrorProtocol>(context: ExecutionContextType = contextSelector(continuation: true), f: E -> Void) {
         self.onComplete(context) { (result:Result<Value, E>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error)
@@ -41,7 +41,7 @@ public extension FutureType {
         }
     }
     
-    public func onFailure(context: ExecutionContextType = contextSelector(continuation: true), f: ErrorType -> Void) {
+    public func onFailure(context: ExecutionContextType = contextSelector(continuation: true), f: ErrorProtocol -> Void) {
         self.onComplete(context) { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error.error)
@@ -83,7 +83,7 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B, E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> Result<B, E>) -> Future<B> {
+    public func flatMap<B, E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> Result<B, E>) -> Future<B> {
         let future = MutableFuture<B>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
@@ -114,7 +114,7 @@ public extension FutureType {
         return future
     }
     
-    public func recover<E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) throws ->Value) -> Future<Value> {
+    public func recover<E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) throws ->Value) -> Future<Value> {
         let future = MutableFuture<Value>()
         
         self.onComplete(context) { (result:Result<Value, E>) in
@@ -132,7 +132,7 @@ public extension FutureType {
         return future
     }
     
-    public func recover(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorType) throws ->Value) -> Future<Value> {
+    public func recover(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorProtocol) throws ->Value) -> Future<Value> {
         let future = MutableFuture<Value>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
@@ -150,7 +150,7 @@ public extension FutureType {
         return future
     }
     
-    public func recoverWith<E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) -> Future<Value>) -> Future<Value> {
+    public func recoverWith<E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) -> Future<Value>) -> Future<Value> {
         let future = MutableFuture<Value>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in
@@ -169,7 +169,7 @@ public extension FutureType {
         return future
     }
     
-    public func recoverWith(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorType) -> Future<Value>) -> Future<Value> {
+    public func recoverWith(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorProtocol) -> Future<Value>) -> Future<Value> {
         let future = MutableFuture<Value>()
         
         self.onComplete(context) { (result:Result<Value, AnyError>) in

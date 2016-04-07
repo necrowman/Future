@@ -37,6 +37,10 @@
 		65F0F7191C9876EA00E1E59B /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F7181C9876EA00E1E59B /* Error.swift */; };
 		65F0F71B1C98776E00E1E59B /* Result+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F71A1C98776E00E1E59B /* Result+.swift */; };
 		65F0F71D1C987CE600E1E59B /* Future+Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F71C1C987CE600E1E59B /* Future+Functional.swift */; };
+		925CEB861CB58265000AD550 /* XCTest3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; };
+		925CEB871CB58265000AD550 /* XCTest3.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = 925CEB851CB58265000AD550 /* XCTest3.framework.dSYM */; };
+		925CEB881CB58287000AD550 /* XCTest3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; };
+		925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +61,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				65F0F7051C98612300E1E59B /* Boilerplate.framework in Copy Frameworks */,
+				925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */,
 				65F0F7061C98612300E1E59B /* ExecutionContext.framework in Copy Frameworks */,
 				65F0F7071C98612300E1E59B /* Result.framework in Copy Frameworks */,
 				65F0F7081C98612300E1E59B /* RunLoop.framework in Copy Frameworks */,
@@ -91,6 +96,8 @@
 		65F0F7181C9876EA00E1E59B /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		65F0F71A1C98776E00E1E59B /* Result+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Result+.swift"; sourceTree = "<group>"; };
 		65F0F71C1C987CE600E1E59B /* Future+Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Future+Functional.swift"; sourceTree = "<group>"; };
+		925CEB841CB58265000AD550 /* XCTest3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XCTest3.framework; sourceTree = "<group>"; };
+		925CEB851CB58265000AD550 /* XCTest3.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = XCTest3.framework.dSYM; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +110,7 @@
 				65F0F6FA1C94A19700E1E59B /* Boilerplate.framework in Frameworks */,
 				65F0F6FC1C94A19700E1E59B /* ExecutionContext.framework in Frameworks */,
 				65F0F7021C94A19700E1E59B /* UV.framework in Frameworks */,
+				925CEB861CB58265000AD550 /* XCTest3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +121,7 @@
 				65F0F6DD1C94A0F500E1E59B /* Future.framework in Frameworks */,
 				65F0F70A1C98618C00E1E59B /* Boilerplate.framework in Frameworks */,
 				65F0F70B1C98618C00E1E59B /* ExecutionContext.framework in Frameworks */,
+				925CEB881CB58287000AD550 /* XCTest3.framework in Frameworks */,
 				65F0F70C1C98618C00E1E59B /* Result.framework in Frameworks */,
 				65F0F70D1C98618C00E1E59B /* RunLoop.framework in Frameworks */,
 				65F0F70E1C98618C00E1E59B /* UV.framework in Frameworks */,
@@ -163,7 +172,8 @@
 				65F0F6E11C94A0F500E1E59B /* FutureTests.swift */,
 				65F0F6E31C94A0F500E1E59B /* Info.plist */,
 			);
-			path = FutureTests;
+			name = FutureTests;
+			path = Tests/Future;
 			sourceTree = "<group>";
 		};
 		65F0F6EE1C94A19700E1E59B /* Frameworks */ = {
@@ -178,6 +188,8 @@
 		65F0F6EF1C94A19700E1E59B /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				925CEB841CB58265000AD550 /* XCTest3.framework */,
+				925CEB851CB58265000AD550 /* XCTest3.framework.dSYM */,
 				65F0F6F01C94A19700E1E59B /* Boilerplate.framework */,
 				65F0F6F11C94A19700E1E59B /* Boilerplate.framework.dSYM */,
 				65F0F6F21C94A19700E1E59B /* ExecutionContext.framework */,
@@ -286,6 +298,7 @@
 				65F0F7031C94A19800E1E59B /* UV.framework.dSYM in Resources */,
 				65F0F7011C94A19700E1E59B /* RunLoop.framework.dSYM in Resources */,
 				65F0F6FB1C94A19700E1E59B /* Boilerplate.framework.dSYM in Resources */,
+				925CEB871CB58265000AD550 /* XCTest3.framework.dSYM in Resources */,
 				65F0F6FF1C94A19700E1E59B /* Result.framework.dSYM in Resources */,
 				65F0F6FD1C94A19700E1E59B /* ExecutionContext.framework.dSYM in Resources */,
 			);
@@ -480,7 +493,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = FutureTests/Info.plist;
+				INFOPLIST_FILE = Tests/Future/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.crossroadlabs.FutureTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -495,7 +508,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = FutureTests/Info.plist;
+				INFOPLIST_FILE = Tests/Future/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.crossroadlabs.FutureTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

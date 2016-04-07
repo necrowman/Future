@@ -20,7 +20,7 @@ import Result
 import Boilerplate
 
 internal extension Result {
-    func tryMapError<E : ErrorType>(f:(Error)->E?) -> Result<T, E>? {
+    func tryMapError<E : ErrorProtocol>(f:(Error)->E?) -> Result<T, E>? {
         guard let error = self.error else {
             return self.mapError { e in
                 //will never be called
@@ -42,15 +42,8 @@ internal extension Result {
     }
 }
 
-protocol AnyErrorType {
-    var error:ErrorType {get}
-}
-
-extension AnyError : AnyErrorType {
-}
-
-internal extension Result where Error : AnyErrorType {
-    func tryAsError<E : ErrorType>() -> Result<T, E>? {
+internal extension Result where Error : AnyErrorProtocol {
+    func tryAsError<E : ErrorProtocol>() -> Result<T, E>? {
         return self.tryMapError { e -> E? in
             switch e {
             case let e as E:

@@ -20,13 +20,13 @@ import Boilerplate
 import ExecutionContext
 
 public protocol FutureType {
-    typealias Value
+    associatedtype Value
     
     init(value:Value)
-    init(error:ErrorType)
-    init<E : ErrorType>(result:Result<Value, E>)
+    init(error:ErrorProtocol)
+    init<E : ErrorProtocol>(result:Result<Value, E>)
     
-    func onComplete<E: ErrorType>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self
+    func onComplete<E: ErrorProtocol>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self
     
     var isCompleted:Bool {get}
 }
@@ -59,11 +59,11 @@ public class Future<V> : FutureType {
         self.init(result: Result<Value, AnyError>(value: value))
     }
     
-    public required convenience init(error:ErrorType) {
+    public required convenience init(error:ErrorProtocol) {
         self.init(result: Result(error: AnyError(error)))
     }
     
-    public required convenience init<E : ErrorType>(result:Result<Value, E>) {
+    public required convenience init<E : ErrorProtocol>(result:Result<Value, E>) {
         self.init()
         self.result = result.asAnyError()
         self.isCompleted = true
@@ -83,7 +83,7 @@ public class Future<V> : FutureType {
         }
     }
     
-    public func onComplete<E: ErrorType>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self {
+    public func onComplete<E: ErrorProtocol>(context: ExecutionContextType, callback: Result<Value, E> -> Void) -> Self {
         
         let context = Future.selectContext(context)
         
@@ -135,7 +135,7 @@ public func future<T>(context:ExecutionContextType = contextSelector(continuatio
     return future
 }
 
-public func future<T, E : ErrorType>(context:ExecutionContextType = contextSelector(continuation: false), task:() -> Result<T, E>) -> Future<T> {
+public func future<T, E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: false), task:() -> Result<T, E>) -> Future<T> {
     let future = MutableFuture<T>()
     
     context.execute {
