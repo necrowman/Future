@@ -29,6 +29,10 @@ func fibonacci(n: Int) -> Int {
     }
 }
 
+func getMutablePointer(object: AnyObject) -> UnsafeMutablePointer<Void> {
+    return UnsafeMutablePointer<Void>(bitPattern: Int(ObjectIdentifier(object).uintValue))
+}
+
 /**
  * This extension contains utility methods used in the tests above
  */
@@ -488,5 +492,365 @@ class FutureTests: XCTestCase {
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
+    
+    func testRecoverWith() {
+        let e = self.expectation()
+        
+        future {
+            Result(error: NSError(domain: "NaN", code: 0, userInfo: nil))
+        }.recoverWith { _ in
+            return future { _ in
+                fibonacci(5)
+            }
+        }.onSuccess { value in
+            XCTAssert(value == 5)
+            e.fulfill()
+        }
+        
+//        let e1 = self.expectation()
+//        
+//        let f: Future<Int, NoError> = Future<Int, NSError>(error: NSError(domain: "NaN", code: 0, userInfo: nil)) ?? future(fibonacci(5))
+//        
+//        f.onSuccess {
+//            XCTAssertEqual($0, 5)
+//            e1.fulfill()
+//        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+    func testRecoverThrowError() {
+        let e = self.expectation()
+        
+        Future<Int>(error: TestError.Recoverable).recover { (error: TestError) in
+            throw TestError.Fatal
+        }.onFailure { (error:TestError) in
+            XCTAssertEqual(error, TestError.Fatal)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+//    func testZip() {
+//        let f = Future<Int>(value: 1)
+//        let f1 = Future<Int>(value: 2)
+//        
+//        let e = self.expectation()
+//        
+//        f.zip(f1).onSuccess { (let a, let b) in
+//            XCTAssertEqual(a, 1)
+//            XCTAssertEqual(b, 2)
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+//    func testZipThisFails() {
+//        let f: Future<Bool> = future { () -> Result<Bool,NSError> in
+//            Thread.sleep(1)
+//            return Result(error: NSError(domain: "test", code: 2, userInfo: nil))
+//        }
+//        
+//        let f1 = Future<Int>(value: 2)
+//        
+//        let e = self.expectation()
+//        
+//        f.zip(f1).onFailure { error in
+//            XCTAssert(error.domain == "test")
+//            XCTAssertEqual(error.code, 2)
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+//    func testZipThatFails() {
+//        let f = future { () -> Result<Int,NSError> in
+//            Thread.sleep(1)
+//            return Result(error: NSError(domain: "tester", code: 3, userInfo: nil))
+//        }
+//        
+//        let f1 = Future<Int>(value: 2)
+//        
+//        let e = self.expectation()
+//        
+//        f1.zip(f).onFailure { error in
+//            XCTAssert(error.domain == "tester")
+//            XCTAssertEqual(error.code, 3)
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+//    func testZipBothFail() {
+//        let f = future { () -> Result<Int,NSError> in
+//            Thread.sleep(1)
+//            return Result(error: NSError(domain: "f-error", code: 3, userInfo: nil))
+//        }
+//        
+//        let f1 = future { () -> Result<Int,NSError> in
+//            Thread.sleep(1)
+//            return Result(error: NSError(domain: "f1-error", code: 4, userInfo: nil))
+//        }
+//        
+//        let e = self.expectation()
+//        
+//        f.zip(f1).onFailure { error in
+//            XCTAssert(error.domain == "f-error")
+//            XCTAssertEqual(error.code, 3)
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+//    func testFilterNoSuchElement() {
+//        let e = self.expectation()
+//        Future<Int>(value: 3).filter { $0 > 5}.onComplete { result in
+//            if let err = result.error {
+//                XCTAssert(err == BrightFuturesError<NoError>.NoSuchElement, "filter should yield no result")
+//            }
+//            e.fulfill()
+//        }
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+//    
+//    func testFilterPasses() {
+//        let e = self.expectation()
+//        Future<String>(value: "Thomas").filter { $0.hasPrefix("Th") }.onComplete { result in
+//            if let val = result.value {
+//                XCTAssert(val == "Thomas", "Filter should pass")
+//            }
+//            
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+//    
+//    func testFilterFailedFuture() {
+//        let f = Future<Int>(error: TestError.Recoverable)
+//        
+//        let e = self.expectation()
+//        f.filter { _ in false }.onFailure { (error:TestError) in
+//            XCTAssert(error == TestError.Recoverable)
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+//    func testReadyFuture() {
+//        var x = 10
+//        let f: Future<Void> = future { () -> Void in
+//            Thread.sleep(0.5)
+//            x = 3
+//        }
+//        f.ready()
+//        XCTAssertEqual(x, 3)
+//    }
+//    
+//    func testReadyFutureWithTimeout() {
+//        let f: Future<Void> = future {
+//            Thread.sleep(0.5)
+//        }
+//        
+//        XCTAssert(f.ready(0.1) == nil)
+//        
+//        XCTAssert(f.ready(0.5) != nil)
+//    }
+    
+//    func testReadyCompletedFuture() {
+//        let f = Future<Int>(value: 1)
+//        XCTAssertEqual(f.ready().value!, 1)
+//    }
+
+    func testFlatMap() {
+        let e = self.expectation()
+        
+        let finalString = "Greg"
+        
+        let flatMapped = Future<String>(value: "Thomas").flatMap { _ in
+            return Future<String>(value: finalString)
+        }
+        
+        flatMapped.onSuccess { s in
+            XCTAssertEqual(s, finalString, "strings are not equal")
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+//    func testFlatMapByPassingFunction() {
+//        let e = self.expectation()
+//        
+//        func toString(n: Int) -> Future<String> {
+//            return Future<String>(value: "\(n)")
+//        }
+//        
+//        let n = 1
+//        let flatMapped = Future<Int>(value: n).flatMap(toString)
+//        
+//        flatMapped.onSuccess { s in
+//            XCTAssertEqual(s, "\(n)", "strings are not equal")
+//            e.fulfill()
+//        }
+//        
+//        self.waitForExpectations(withTimeout: 2, handler: nil)
+//    }
+    
+    func testFlatMapResult() {
+        let e = self.expectation()
+        
+        Future<Int>(value: 3).flatMap { _ in
+            Result<Int, AnyError>(value: 22)
+        }.onSuccess { val in
+            XCTAssertEqual(val, 22)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+    // MARK: Advanced Tests
+
+    // Creates a lot of futures and adds completion blocks concurrently, which should all fire
+    func testStress() {
+            let instances = 100;
+            var successfulFutures = [Future<Int>]()
+            var failingFutures = [Future<Int>]()
+            let contexts: [ExecutionContextType] = [immediate, main, global]
+            
+            let randomContext: () -> ExecutionContextType = { contexts[Int(arc4random_uniform(UInt32(contexts.count)))] }
+            let randomFuture: () -> Future<Int> = {
+                if arc4random() % 2 == 0 {
+                    return successfulFutures[Int(arc4random_uniform(UInt32(successfulFutures.count)))]
+                } else {
+                    return failingFutures[Int(arc4random_uniform(UInt32(failingFutures.count)))]
+                }
+            }
+            
+            var finalSum = 0;
+            
+            for _ in 1...instances {
+                var future: Future<Int>
+                if arc4random() % 2 == 0 {
+                    let futureResult: Int = Int(arc4random_uniform(10))
+                    finalSum += futureResult
+                    future = self.succeedingFuture(futureResult)
+                    successfulFutures.append(future)
+                } else {
+                    future = self.failingFuture()
+                    failingFutures.append(future)
+                }
+                
+                let context = randomContext()
+                let e = self.expectation(withDescription: "future completes in context \(context)")
+                
+                future.onComplete(context) { (res:Result<Int, AnyError>) in
+                    e.fulfill()
+                }
+                
+                
+            }
+            
+            for _ in 1...instances*10 {
+                let f = randomFuture()
+                
+                let context = randomContext()
+                let e = self.expectation(withDescription: "future completes in context \(context)")
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                    usleep(arc4random_uniform(100))
+                    
+                    f.onComplete(context) { (res:Result<Int, AnyError>) in
+                        e.fulfill()
+                    }
+                }
+            }
+            
+            self.waitForExpectations(withTimeout: 10, handler: nil)
+    }
+    
+    func testSerialCallbacks() {
+        let p = Promise<Void>()
+        
+        var executingCallbacks = 0
+        for _ in 0..<10 {
+            let e = self.expectation()
+            p.future.onComplete(global) { (res:Result<Void, AnyError>) in
+                XCTAssert(executingCallbacks == 0, "This should be the only executing callback")
+                
+                executingCallbacks += 1
+                
+                // sleep a bit to increase the chances of other callback blocks executing
+                Thread.sleep(0.06)
+                
+                executingCallbacks -= 1
+                
+                e.fulfill()
+            }
+            
+            let e1 = self.expectation()
+            p.future.onComplete(main) { (res:Result<Void, AnyError>) in
+                XCTAssert(executingCallbacks == 0, "This should be the only executing callback")
+                
+                executingCallbacks += 1
+                
+                // sleep a bit to increase the chances of other callback blocks executing
+                Thread.sleep(0.06)
+                
+                executingCallbacks -= 1
+                
+                e1.fulfill()
+            }
+        }
+        
+        p.trySuccess()
+        
+        self.waitForExpectations(withTimeout: 5, handler: nil)
+    }
+    
+    #if !os(Linux) || dispatch
+    // Test for https://github.com/Thomvis/BrightFutures/issues/18
+    func testCompletionBlockOnMainQueue() {
+        var key = "mainqueuespecifickey"
+        let value = "value"
+        let valuePointer = getMutablePointer(value)
+        
+        
+        dispatch_queue_set_specific(dispatch_get_main_queue(), &key, valuePointer, nil)
+        XCTAssertEqual(dispatch_get_specific(&key), valuePointer, "value should have been set on the main (i.e. current) queue")
+        
+        let e = self.expectation()
+        Future<Int>(value: 1).onSuccess(main) { val in
+            XCTAssertEqual(dispatch_get_specific(&key), valuePointer, "we should now too be on the main queue")
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    #endif
+    
+//    func testRelease() {
+//        weak var f: Future<Int>? = nil
+//        
+//        var f1: Future<Int>? = Future<Int>(value: 1).map { $0 }.recover { _ in
+//            return 0
+//        }.onSuccess { _ in
+//        }.onComplete { _ in
+//        }
+//        
+//        f = f1
+//        XCTAssertNotNil(f1);
+//        XCTAssertNotNil(f);
+//        f1 = nil
+//        XCTAssertNil(f1)
+//        XCTAssertNil(f)
+//    }
 
 }
