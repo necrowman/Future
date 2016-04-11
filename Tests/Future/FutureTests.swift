@@ -15,7 +15,7 @@ import ExecutionContext
 
 /*@testable*/ import Future
 
-private enum TestError : ErrorProtocol {
+enum TestError : ErrorProtocol {
     case Recoverable
     case Fatal
 }

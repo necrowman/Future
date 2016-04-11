@@ -41,6 +41,7 @@
 		925CEB871CB58265000AD550 /* XCTest3.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = 925CEB851CB58265000AD550 /* XCTest3.framework.dSYM */; };
 		925CEB881CB58287000AD550 /* XCTest3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; };
 		925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		92E409081CBBBD85001ED069 /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E409071CBBBD85001ED069 /* PromiseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		65F0F71C1C987CE600E1E59B /* Future+Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Future+Functional.swift"; sourceTree = "<group>"; };
 		925CEB841CB58265000AD550 /* XCTest3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XCTest3.framework; sourceTree = "<group>"; };
 		925CEB851CB58265000AD550 /* XCTest3.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = XCTest3.framework.dSYM; sourceTree = "<group>"; };
+		92E409071CBBBD85001ED069 /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +173,7 @@
 			children = (
 				65F0F6E11C94A0F500E1E59B /* FutureTests.swift */,
 				65F0F6E31C94A0F500E1E59B /* Info.plist */,
+				92E409071CBBBD85001ED069 /* PromiseTests.swift */,
 			);
 			name = FutureTests;
 			path = Tests/Future;
@@ -334,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65F0F6E21C94A0F500E1E59B /* FutureTests.swift in Sources */,
+				92E409081CBBBD85001ED069 /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
