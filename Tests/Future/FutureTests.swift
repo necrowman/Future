@@ -295,7 +295,7 @@ class FutureTests: XCTestCase {
             e.fulfill()
         }
         
-        self.waitForExpectations(withTimeout: 0, handler: nil)
+        self.waitForExpectations(withTimeout: 1, handler: nil)
     }
     
     func testMainExecutionContext() {
@@ -764,7 +764,7 @@ class FutureTests: XCTestCase {
                 let context = randomContext()
                 let e = self.expectation(withDescription: "future completes in context \(context)")
                 
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                global.execute {
                     usleep(arc4random_uniform(100))
                     
                     f.onComplete(context) { (res:Result<Int, AnyError>) in

@@ -27,10 +27,6 @@ public var contextSelector:ContextSelector = { continuation in
     if continuation {
         return immediate
     } else {
-        if Thread.isMain {
-            return main
-        } else {
-            return global
-        }
+        return global
     }
 }

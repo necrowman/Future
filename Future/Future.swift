@@ -74,12 +74,7 @@ public class Future<V> : FutureType {
         if context.isEqualTo(immediate) {
             return ExecutionContext.current
         } else {
-            let current = ExecutionContext.current
-            if current.isEqualTo(context) {
-                return immediate
-            } else {
-                return context
-            }
+            return context
         }
     }
     

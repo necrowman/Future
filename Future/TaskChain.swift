@@ -35,7 +35,9 @@ internal class TaskChain {
     }
     
     func perform() {
-        head()
+        admin.execute {
+            self.head()
+        }
     }
     
     /// you have to handle calling next yourself
