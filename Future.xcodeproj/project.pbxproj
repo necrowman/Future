@@ -32,6 +32,16 @@
 		65F0F7191C9876EA00E1E59B /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F7181C9876EA00E1E59B /* Error.swift */; };
 		65F0F71B1C98776E00E1E59B /* Result+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F71A1C98776E00E1E59B /* Result+.swift */; };
 		65F0F71D1C987CE600E1E59B /* Future+Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F71C1C987CE600E1E59B /* Future+Functional.swift */; };
+		65FD8F591CDBB6C60046D5D6 /* EventOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */; };
+		65FD8F5A1CDBB6C60046D5D6 /* EventOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */; };
+		65FD8F5B1CDBB6C60046D5D6 /* EventOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */; };
+		65FD8F5C1CDBB6C60046D5D6 /* EventOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */; };
+		65FD8F5E1CDBC2A30046D5D6 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */; };
+		65FD8F5F1CDBC2A30046D5D6 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */; };
+		65FD8F601CDBC2A30046D5D6 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */; };
+		65FD8F621CDBC5BC0046D5D6 /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65FD8F611CDBC5BC0046D5D6 /* Event.framework */; };
+		65FD8F631CDBC5CE0046D5D6 /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65FD8F611CDBC5BC0046D5D6 /* Event.framework */; };
+		65FD8F641CDBC5D60046D5D6 /* Event.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 65FD8F611CDBC5BC0046D5D6 /* Event.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		925CEB881CB58287000AD550 /* XCTest3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; };
 		925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		92E409081CBBBD85001ED069 /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E409071CBBBD85001ED069 /* PromiseTests.swift */; };
@@ -137,6 +147,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				65FD8F641CDBC5D60046D5D6 /* Event.framework in Copy Frameworks */,
 				65F0F7051C98612300E1E59B /* Boilerplate.framework in Copy Frameworks */,
 				925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */,
 				65F0F7061C98612300E1E59B /* ExecutionContext.framework in Copy Frameworks */,
@@ -200,6 +211,9 @@
 		65F0F7181C9876EA00E1E59B /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		65F0F71A1C98776E00E1E59B /* Result+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Result+.swift"; sourceTree = "<group>"; };
 		65F0F71C1C987CE600E1E59B /* Future+Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Future+Functional.swift"; sourceTree = "<group>"; };
+		65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventOnce.swift; sourceTree = "<group>"; };
+		65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
+		65FD8F611CDBC5BC0046D5D6 /* Event.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Event.framework; sourceTree = "<group>"; };
 		925CEB841CB58265000AD550 /* XCTest3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XCTest3.framework; sourceTree = "<group>"; };
 		92E409071CBBBD85001ED069 /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		92F8AE5B1CDB56CD00938F50 /* Foundation3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Foundation3.framework; sourceTree = "<group>"; };
@@ -231,6 +245,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65FD8F621CDBC5BC0046D5D6 /* Event.framework in Frameworks */,
 				65F0F7001C94A19700E1E59B /* RunLoop.framework in Frameworks */,
 				65F0F6FE1C94A19700E1E59B /* Result.framework in Frameworks */,
 				65F0F6FA1C94A19700E1E59B /* Boilerplate.framework in Frameworks */,
@@ -244,6 +259,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65FD8F631CDBC5CE0046D5D6 /* Event.framework in Frameworks */,
 				65F0F6DD1C94A0F500E1E59B /* Future.framework in Frameworks */,
 				65F0F70A1C98618C00E1E59B /* Boilerplate.framework in Frameworks */,
 				65F0F70B1C98618C00E1E59B /* ExecutionContext.framework in Frameworks */,
@@ -356,6 +372,7 @@
 				65AE34241C988C4200AC1DBA /* ContextSelector.swift */,
 				65F0F7181C9876EA00E1E59B /* Error.swift */,
 				65F0F71A1C98776E00E1E59B /* Result+.swift */,
+				65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */,
 			);
 			path = Future;
 			sourceTree = "<group>";
@@ -366,6 +383,7 @@
 				65F0F6E11C94A0F500E1E59B /* FutureTests.swift */,
 				65F0F6E31C94A0F500E1E59B /* Info.plist */,
 				92E409071CBBBD85001ED069 /* PromiseTests.swift */,
+				65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */,
 			);
 			name = FutureTests;
 			path = Tests/Future;
@@ -386,6 +404,7 @@
 		65F0F6EF1C94A19700E1E59B /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				65FD8F611CDBC5BC0046D5D6 /* Event.framework */,
 				92F8AE5B1CDB56CD00938F50 /* Foundation3.framework */,
 				925CEB841CB58265000AD550 /* XCTest3.framework */,
 				65F0F6F01C94A19700E1E59B /* Boilerplate.framework */,
@@ -717,6 +736,7 @@
 				65F0F6ED1C94A15900E1E59B /* Future.swift in Sources */,
 				65F0F7131C98766B00E1E59B /* Promise.swift in Sources */,
 				65F0F7191C9876EA00E1E59B /* Error.swift in Sources */,
+				65FD8F591CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				65F0F7151C98767C00E1E59B /* MutableFuture.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -726,6 +746,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65F0F6E21C94A0F500E1E59B /* FutureTests.swift in Sources */,
+				65FD8F5E1CDBC2A30046D5D6 /* EventTests.swift in Sources */,
 				92E409081CBBBD85001ED069 /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -741,6 +762,7 @@
 				92F8AE7F1CDB590000938F50 /* MutableFuture.swift in Sources */,
 				92F8AE821CDB590000938F50 /* ContextSelector.swift in Sources */,
 				92F8AE831CDB590000938F50 /* Error.swift in Sources */,
+				65FD8F5A1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AE801CDB590000938F50 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -750,6 +772,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92F8AE981CDB596B00938F50 /* FutureTests.swift in Sources */,
+				65FD8F5F1CDBC2A30046D5D6 /* EventTests.swift in Sources */,
 				92F8AE991CDB596B00938F50 /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -765,6 +788,7 @@
 				92F8AEB81CDB5A1E00938F50 /* MutableFuture.swift in Sources */,
 				92F8AEBB1CDB5A1E00938F50 /* ContextSelector.swift in Sources */,
 				92F8AEBC1CDB5A1E00938F50 /* Error.swift in Sources */,
+				65FD8F5B1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AEB91CDB5A1E00938F50 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -774,6 +798,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92F8AEBE1CDB5A2400938F50 /* FutureTests.swift in Sources */,
+				65FD8F601CDBC2A30046D5D6 /* EventTests.swift in Sources */,
 				92F8AEBF1CDB5A2400938F50 /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -789,6 +814,7 @@
 				92F8AEE91CDB5B9700938F50 /* MutableFuture.swift in Sources */,
 				92F8AEEC1CDB5B9700938F50 /* ContextSelector.swift in Sources */,
 				92F8AEED1CDB5B9700938F50 /* Error.swift in Sources */,
+				65FD8F5C1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AEEA1CDB5B9700938F50 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
