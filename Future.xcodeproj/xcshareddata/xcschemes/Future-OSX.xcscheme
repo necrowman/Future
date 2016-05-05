@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "65F0F6D11C94A0F400E1E59B"
                BuildableName = "Future.framework"
-               BlueprintName = "Future"
+               BlueprintName = "Future-OSX"
                ReferencedContainer = "container:Future.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "65F0F6DB1C94A0F500E1E59B"
-               BuildableName = "FutureTests.xctest"
-               BlueprintName = "FutureTests"
+               BuildableName = "FutureTests-OSX.xctest"
+               BlueprintName = "FutureTests-OSX"
                ReferencedContainer = "container:Future.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -44,7 +44,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "65F0F6D11C94A0F400E1E59B"
             BuildableName = "Future.framework"
-            BlueprintName = "Future"
+            BlueprintName = "Future-OSX"
             ReferencedContainer = "container:Future.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,7 +66,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "65F0F6D11C94A0F400E1E59B"
             BuildableName = "Future.framework"
-            BlueprintName = "Future"
+            BlueprintName = "Future-OSX"
             ReferencedContainer = "container:Future.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -84,7 +84,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "65F0F6D11C94A0F400E1E59B"
             BuildableName = "Future.framework"
-            BlueprintName = "Future"
+            BlueprintName = "Future-OSX"
             ReferencedContainer = "container:Future.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
