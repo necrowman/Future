@@ -21,28 +21,24 @@ import Boilerplate
 import ExecutionContext
 
 public extension FutureType {
-    public func onComplete<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self {
-        return onComplete(contextSelector(continuation: true), callback: callback)
-    }
-    
-    public func onSuccess(context: ExecutionContextType = contextSelector(continuation: true), f: Value -> Void) {
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+    public func onSuccess(f: Value -> Void) {
+        self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 f(value)
             }, ifFailure: {_ in})
         }
     }
     
-    public func onFailure<E : ErrorProtocol>(context: ExecutionContextType = contextSelector(continuation: true), f: E -> Void) {
-        self.onComplete(context) { (result:Result<Value, E>) in
+    public func onFailure<E : ErrorProtocol>(f: E -> Void) {
+        self.onComplete { (result:Result<Value, E>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error)
             })
         }
     }
     
-    public func onFailure(context: ExecutionContextType = contextSelector(continuation: true), f: ErrorProtocol -> Void) {
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+    public func onFailure(f: ErrorProtocol -> Void) {
+        self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error.error)
             })
@@ -51,10 +47,10 @@ public extension FutureType {
 }
 
 public extension FutureType {
-    public func map<B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) throws -> B) -> Future<B> {
-        let future = MutableFuture<B>()
+    public func map<B>(f:(Value) throws -> B) -> Future<B> {
+        let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             let result = result.flatMap { value in
                 materializeAny {
                     try f(value)
@@ -66,13 +62,13 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B, F : FutureType where F.Value == B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> F) -> Future<B> {
-        let future = MutableFuture<B>()
+    public func flatMap<B, F : FutureType where F.Value == B>(f:(Value) -> F) -> Future<B> {
+        let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 let b = f(value)
-                b.onComplete(immediate) { (result:Result<B, AnyError>) in
+                b.onComplete { (result:Result<B, AnyError>) in
                     try! future.complete(result)
                 }
             }, ifFailure: { error in
@@ -83,10 +79,10 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B, E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> Result<B, E>) -> Future<B> {
-        let future = MutableFuture<B>()
+    public func flatMap<B, E : ErrorProtocol>(f:(Value) -> Result<B, E>) -> Future<B> {
+        let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 let b = f(value)
                 try! future.complete(b)
@@ -98,10 +94,10 @@ public extension FutureType {
         return future
     }
     
-    public func flatMap<B>(context:ExecutionContextType = contextSelector(continuation: true), f:(Value) -> B?) -> Future<B> {
-        let future = MutableFuture<B>()
+    public func flatMap<B>(f:(Value) -> B?) -> Future<B> {
+        let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             let result:Result<B, AnyError> = result.flatMap { value in
                 guard let b = f(value) else {
                     return Result(error: AnyError(Error.MappedNil))
@@ -114,10 +110,10 @@ public extension FutureType {
         return future
     }
     
-    public func recover<E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) throws ->Value) -> Future<Value> {
-        let future = MutableFuture<Value>()
+    public func recover<E : ErrorProtocol>(f:(E) throws ->Value) -> Future<Value> {
+        let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, E>) in
+        self.onComplete { (result:Result<Value, E>) in
             let result = result.flatMapError { error in
                 return materializeAny {
                     try f(error)
@@ -127,15 +123,15 @@ public extension FutureType {
         }
         
         // if first one didn't match this one will be called next
-        future.completeWith(context, f:self)
+        future.completeWith(self)
         
         return future
     }
     
-    public func recover(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorProtocol) throws ->Value) -> Future<Value> {
-        let future = MutableFuture<Value>()
+    public func recover(f:(ErrorProtocol) throws ->Value) -> Future<Value> {
+        let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             let result = result.flatMapError { error in
                 return materializeAny {
                     try f(error.error)
@@ -145,15 +141,15 @@ public extension FutureType {
         }
         
         // if first one didn't match this one will be called next
-        future.completeWith(context, f:self)
+        future.completeWith(self)
         
         return future
     }
     
-    public func recoverWith<E : ErrorProtocol>(context:ExecutionContextType = contextSelector(continuation: true), f:(E) -> Future<Value>) -> Future<Value> {
-        let future = MutableFuture<Value>()
+    public func recoverWith<E : ErrorProtocol>(f:(E) -> Future<Value>) -> Future<Value> {
+        let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             guard let mapped:Result<Value, E> = result.tryAsError() else {
                 try! future.complete(result)
                 return
@@ -162,17 +158,17 @@ public extension FutureType {
             mapped.analysis(ifSuccess: { _ in
                 try! future.complete(result)
             }, ifFailure: { e in
-                future.completeWith(immediate, f:f(e))
+                future.completeWith(f(e))
             })
         }
         
         return future
     }
     
-    public func recoverWith(context:ExecutionContextType = contextSelector(continuation: true), f:(ErrorProtocol) -> Future<Value>) -> Future<Value> {
-        let future = MutableFuture<Value>()
+    public func recoverWith(f:(ErrorProtocol) -> Future<Value>) -> Future<Value> {
+        let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete(context) { (result:Result<Value, AnyError>) in
+        self.onComplete { (result:Result<Value, AnyError>) in
             guard let mapped:Result<Value, AnyError> = result.tryAsError() else {
                 try! future.complete(result)
                 return
@@ -180,8 +176,8 @@ public extension FutureType {
             
             mapped.analysis(ifSuccess: { _ in
                 try! future.complete(result)
-                }, ifFailure: { e in
-                    future.completeWith(immediate, f:f(e.error))
+            }, ifFailure: { e in
+                future.completeWith(f(e.error))
             })
         }
         

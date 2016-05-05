@@ -17,6 +17,7 @@
 import Foundation
 import Boilerplate
 import Result
+import ExecutionContext
 
 public class Promise<V> : MutableFutureType {
     public typealias Value = V
@@ -30,7 +31,7 @@ public class Promise<V> : MutableFutureType {
     }
     
     public init() {
-        _future = MutableFuture()
+        _future = MutableFuture(context: immediate)
     }
     
     public func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {

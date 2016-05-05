@@ -27,6 +27,10 @@ public protocol MutableFutureType {
 }
 
 internal class MutableFuture<V> : Future<V>, MutableFutureType {
+    internal override init(context:ExecutionContextType) {
+        super.init(context: context)
+    }
+    
     internal func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
         if self.result != nil {
             return false
@@ -66,8 +70,8 @@ public extension MutableFutureType {
     
     
     /// safe to be called several times
-    func completeWith<F: FutureType where F.Value == Value>(context:ExecutionContextType = contextSelector(continuation: false), f:F) {
-        f.onComplete(context) { (result:Result<Value, AnyError>) in
+    func completeWith<F: FutureType where F.Value == Value>(f:F) {
+        f.onComplete { (result:Result<Value, AnyError>) in
             self.tryComplete(result)
         }
     }
