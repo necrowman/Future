@@ -44,6 +44,13 @@
 		65FD8F641CDBC5D60046D5D6 /* Event.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 65FD8F611CDBC5BC0046D5D6 /* Event.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		925CEB881CB58287000AD550 /* XCTest3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; };
 		925CEB891CB582AB000AD550 /* XCTest3.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 925CEB841CB58265000AD550 /* XCTest3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		92B0010C1CE1E87000E23C7B /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010B1CE1E87000E23C7B /* Event.framework */; };
+		92B0010D1CE1E87000E23C7B /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010B1CE1E87000E23C7B /* Event.framework */; };
+		92B0010E1CE1E87F00E23C7B /* Event.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010B1CE1E87000E23C7B /* Event.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		92B001101CE1E8AE00E23C7B /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010F1CE1E8AE00E23C7B /* Event.framework */; };
+		92B001111CE1E8AE00E23C7B /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010F1CE1E8AE00E23C7B /* Event.framework */; };
+		92B001121CE1E8B400E23C7B /* Event.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 92B0010F1CE1E8AE00E23C7B /* Event.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		92B001141CE1E8C700E23C7B /* Event.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B001131CE1E8C700E23C7B /* Event.framework */; };
 		92E409081CBBBD85001ED069 /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E409071CBBBD85001ED069 /* PromiseTests.swift */; };
 		92F8AE5C1CDB56CD00938F50 /* Foundation3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92F8AE5B1CDB56CD00938F50 /* Foundation3.framework */; };
 		92F8AE5D1CDB570100938F50 /* Foundation3.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 92F8AE5B1CDB56CD00938F50 /* Foundation3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -171,6 +178,7 @@
 				92F8AEF91CDB5EE100938F50 /* Result.framework in Copy Frameworks */,
 				92F8AEFA1CDB5EE100938F50 /* RunLoop.framework in Copy Frameworks */,
 				92F8AE971CDB594500938F50 /* XCTest3.framework in Copy Frameworks */,
+				92B0010E1CE1E87F00E23C7B /* Event.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -183,6 +191,7 @@
 			files = (
 				92F8AECB1CDB5A6000938F50 /* Boilerplate.framework in Copy Frameworks */,
 				92F8AECC1CDB5A6000938F50 /* ExecutionContext.framework in Copy Frameworks */,
+				92B001121CE1E8B400E23C7B /* Event.framework in Copy Frameworks */,
 				92F8AECD1CDB5A6000938F50 /* Foundation3.framework in Copy Frameworks */,
 				92F8AECE1CDB5A6000938F50 /* Result.framework in Copy Frameworks */,
 				92F8AECF1CDB5A6000938F50 /* RunLoop.framework in Copy Frameworks */,
@@ -215,6 +224,9 @@
 		65FD8F5D1CDBC2A30046D5D6 /* EventTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		65FD8F611CDBC5BC0046D5D6 /* Event.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Event.framework; sourceTree = "<group>"; };
 		925CEB841CB58265000AD550 /* XCTest3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XCTest3.framework; sourceTree = "<group>"; };
+		92B0010B1CE1E87000E23C7B /* Event.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Event.framework; sourceTree = "<group>"; };
+		92B0010F1CE1E8AE00E23C7B /* Event.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Event.framework; sourceTree = "<group>"; };
+		92B001131CE1E8C700E23C7B /* Event.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Event.framework; sourceTree = "<group>"; };
 		92E409071CBBBD85001ED069 /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		92F8AE5B1CDB56CD00938F50 /* Foundation3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Foundation3.framework; sourceTree = "<group>"; };
 		92F8AE661CDB583800938F50 /* Future.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Future.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -275,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92F8AE8D1CDB592300938F50 /* Foundation3.framework in Frameworks */,
+				92B0010C1CE1E87000E23C7B /* Event.framework in Frameworks */,
 				92F8AE8B1CDB592300938F50 /* Boilerplate.framework in Frameworks */,
 				92F8AE8F1CDB592300938F50 /* RunLoop.framework in Frameworks */,
 				92F8AE8C1CDB592300938F50 /* ExecutionContext.framework in Frameworks */,
@@ -291,6 +304,7 @@
 				92F8AEF51CDB5EDA00938F50 /* XCTest3.framework in Frameworks */,
 				92F8AE701CDB583800938F50 /* Future.framework in Frameworks */,
 				92F8AEF31CDB5EDA00938F50 /* Result.framework in Frameworks */,
+				92B0010D1CE1E87000E23C7B /* Event.framework in Frameworks */,
 				92F8AEF11CDB5EDA00938F50 /* ExecutionContext.framework in Frameworks */,
 				92F8AEF21CDB5EDA00938F50 /* Foundation3.framework in Frameworks */,
 			);
@@ -301,6 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92F8AEC71CDB5A4B00938F50 /* Foundation3.framework in Frameworks */,
+				92B001101CE1E8AE00E23C7B /* Event.framework in Frameworks */,
 				92F8AEC51CDB5A4B00938F50 /* Boilerplate.framework in Frameworks */,
 				92F8AEC91CDB5A4B00938F50 /* RunLoop.framework in Frameworks */,
 				92F8AEC61CDB5A4B00938F50 /* ExecutionContext.framework in Frameworks */,
@@ -314,6 +329,7 @@
 			files = (
 				92F8AEA91CDB59AD00938F50 /* Future.framework in Frameworks */,
 				92F8AEFB1CDB5EF700938F50 /* Boilerplate.framework in Frameworks */,
+				92B001111CE1E8AE00E23C7B /* Event.framework in Frameworks */,
 				92F8AEFC1CDB5EF700938F50 /* ExecutionContext.framework in Frameworks */,
 				92F8AEFD1CDB5EF700938F50 /* Foundation3.framework in Frameworks */,
 				92F8AEFE1CDB5EF700938F50 /* Result.framework in Frameworks */,
@@ -326,6 +342,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92F8AEE41CDB5B7000938F50 /* Foundation3.framework in Frameworks */,
+				92B001141CE1E8C700E23C7B /* Event.framework in Frameworks */,
 				92F8AEE21CDB5B7000938F50 /* Boilerplate.framework in Frameworks */,
 				92F8AEE61CDB5B7000938F50 /* RunLoop.framework in Frameworks */,
 				92F8AEE31CDB5B7000938F50 /* ExecutionContext.framework in Frameworks */,
@@ -419,6 +436,7 @@
 		92F8AE5E1CDB578200938F50 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				92B0010B1CE1E87000E23C7B /* Event.framework */,
 				92F8AE851CDB592300938F50 /* Boilerplate.framework */,
 				92F8AE861CDB592300938F50 /* ExecutionContext.framework */,
 				92F8AE871CDB592300938F50 /* Foundation3.framework */,
@@ -432,6 +450,7 @@
 		92F8AE5F1CDB579300938F50 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				92B0010F1CE1E8AE00E23C7B /* Event.framework */,
 				92F8AEC01CDB5A4B00938F50 /* Boilerplate.framework */,
 				92F8AEC11CDB5A4B00938F50 /* ExecutionContext.framework */,
 				92F8AEC21CDB5A4B00938F50 /* Foundation3.framework */,
@@ -444,6 +463,7 @@
 		92F8AE601CDB579E00938F50 /* watchOS */ = {
 			isa = PBXGroup;
 			children = (
+				92B001131CE1E8C700E23C7B /* Event.framework */,
 				92F8AEDD1CDB5B7000938F50 /* Boilerplate.framework */,
 				92F8AEDE1CDB5B7000938F50 /* ExecutionContext.framework */,
 				92F8AEDF1CDB5B7000938F50 /* Foundation3.framework */,

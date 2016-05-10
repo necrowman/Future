@@ -112,3 +112,14 @@ class EventTests: XCTestCase {
         self.waitForExpectations(withTimeout: 1)
     }
 }
+
+#if os(Linux)
+extension EventTests {
+	static var allTests : [(String, EventTests -> () throws -> Void)] {
+		return [
+			("testOnceSuccess", testOnceSuccess),
+			("testOnceFailed", testOnceFailed),
+		]
+	}
+}
+#endif

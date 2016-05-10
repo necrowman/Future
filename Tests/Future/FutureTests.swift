@@ -859,3 +859,49 @@ class FutureTests: XCTestCase {
 //    }
 
 }
+
+#if os(Linux)
+extension FutureTests {
+	static var allTests : [(String, FutureTests -> () throws -> Void)] {
+		return [
+			("testCompletedFuture", testCompletedFuture),
+			("testCompletedVoidFuture", testCompletedVoidFuture),
+			("testFailedFuture", testFailedFuture),
+			("testFutureBasic", testFutureBasic),
+			("testControlFlowSyntax", testControlFlowSyntax),
+			("testControlFlowSyntaxWithError", testControlFlowSyntaxWithError),
+			("testAutoClosure", testAutoClosure),
+			("testAutoClosureWithResult", testAutoClosureWithResult),
+			("testCustomExecutionContext", testCustomExecutionContext),
+			("testMainExecutionContext", testMainExecutionContext),
+			("testDefaultCallbackExecutionContextFromMain", testDefaultCallbackExecutionContextFromMain),
+			("testDefaultCallbackExecutionContextFromBackground", testDefaultCallbackExecutionContextFromBackground),
+			("testPromoteErrorNoSuchElement", testPromoteErrorNoSuchElement),
+			("testAndThen", testAndThen),
+			("testSimpleMap", testSimpleMap),
+			("testMapSuccess", testMapSuccess),
+			("testMapFailure", testMapFailure),
+			("testRecover", testRecover),
+			("testSkippedRecover", testSkippedRecover),
+			("testRecoverWith", testRecoverWith),
+			("testRecoverThrowError", testRecoverThrowError),
+			("testZip", testZip),
+			("testZipThisFails", testZipThisFails),
+			("testZipThatFails", testZipThatFails),
+			("testZipBothFail", testZipBothFail),
+			("testFilterNoSuchElement", testFilterNoSuchElement),
+			("testFilterPasses", testFilterPasses),
+			("testFilterFailedFuture", testFilterFailedFuture),
+			("testReadyFuture", testReadyFuture),
+			("testReadyFutureWithTimeout", testReadyFutureWithTimeout),
+			("testReadyCompletedFuture", testReadyCompletedFuture),
+			("testFlatMap", testFlatMap),
+			("testFlatMapByPassingFunction", testFlatMapByPassingFunction),
+			("testFlatMapResult", testFlatMapResult),
+			("testStress", testStress),
+			("testSerialCallbacks", testSerialCallbacks),
+			("testRelease", testRelease),
+		]
+	}
+}
+#endif

@@ -22,5 +22,6 @@ let package = Package(
     dependencies: [
         .Package(url: "https://github.com/crossroadlabs/XCTest3.git", majorVersion: 0, minor: 1),
         .Package(url: "https://github.com/reactive-swift/ExecutionContext.git", majorVersion: 0, minor: 1),
+        .Package(url: "https://github.com/reactive-swift/Event.git", majorVersion: 0, minor: 1),
     ]
 )
