@@ -22,7 +22,7 @@ import Result
 import Event
 
 public extension EventEmitterProtocol {
-    public func once<E : EventProtocol>(event: E, failOnError:(ErrorType)->Bool = {_ in true}) -> Future<E.Payload> {
+    public func once<E : EventProtocol>(event: E, failOnError:(ErrorProtocol)->Bool = {_ in true}) -> Future<E.Payload> {
         let future = MutableFuture<E.Payload>(context: immediate)
         
         let offEvent = self.on(event).react { payload in
