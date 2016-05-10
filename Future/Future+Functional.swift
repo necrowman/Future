@@ -56,7 +56,11 @@ public extension FutureType {
                     try f(value)
                 }
             }
-            try! future.complete(result)
+            #if os(Linux)
+                try! future.complete(result as! Result<B, AnyError>)
+            #else
+                try! future.complete(result)
+            #endif
         }
         
         return future

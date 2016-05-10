@@ -8,12 +8,13 @@
 
 import XCTest
 import XCTest3
+import Boilerplate
 
 import ExecutionContext
 import Event
 import Future
 
-enum TestOnceError : ErrorType {
+enum TestOnceError : ErrorProtocol {
     case some
     case substitute
 }
