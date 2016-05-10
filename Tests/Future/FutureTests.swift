@@ -85,26 +85,28 @@ extension XCTestCase {
 
 
 class FutureTests: XCTestCase {
+    let mQueue = DefaultExecutionContext(kind: .serial)
     
     func testCompletedFuture() {
-        let f = Future<Int>(value: 2)
-        
         let completeExpectation = self.expectation(withDescription:"immediate complete")
-        
-        f.onComplete { (result:Result<Int,AnyError>) in
-            XCTAssert(result.value != nil)
-            completeExpectation.fulfill()
-        }
-        
         let successExpectation = self.expectation(withDescription: "immediate success")
         
-        f.onSuccess { value in
-            XCTAssert(value == 2, "Computation should be returned")
-            successExpectation.fulfill()
-        }
+        mQueue.sync {
+            let f = Future<Int>(value: 2)
         
-        f.onFailure { _ in
-            XCTFail("failure block should not get called")
+            f.onComplete { (result:Result<Int,AnyError>) in
+                XCTAssert(result.value != nil)
+                completeExpectation.fulfill()
+            }
+        
+            f.onSuccess { value in
+                XCTAssert(value == 2, "Computation should be returned")
+                successExpectation.fulfill()
+            }
+        
+            f.onFailure { _ in
+                XCTFail("failure block should not get called")
+            }
         }
         
         self.waitForExpectations(withTimeout:2, handler: nil)
