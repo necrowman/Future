@@ -44,7 +44,7 @@ class EventEmitterTest : EventEmitterProtocol {
         return self.on(groupedEvent.event)
     }
     
-    func once<E : EventProtocol>(groupedEvent: TestEventGroup<E>, failOnError:(ErrorType)->Bool = {_ in true}) -> Future<E.Payload> {
+    func once<E : EventProtocol>(groupedEvent: TestEventGroup<E>, failOnError:(ErrorProtocol)->Bool = {_ in true}) -> Future<E.Payload> {
         return self.once(groupedEvent.event, failOnError: failOnError)
     }
     

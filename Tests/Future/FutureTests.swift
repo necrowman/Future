@@ -12,6 +12,8 @@ import XCTest3
 import Result
 import Boilerplate
 import ExecutionContext
+import Foundation
+import Foundation3
 
 /*@testable*/ import Future
 
