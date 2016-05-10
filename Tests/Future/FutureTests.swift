@@ -15,6 +15,10 @@ import ExecutionContext
 import Foundation
 import Foundation3
 
+#if os(Linux)
+    import Glibc
+#endif
+
 /*@testable*/ import Future
 
 enum TestError : ErrorProtocol {
@@ -39,20 +43,36 @@ func getMutablePointer(object: AnyObject) -> UnsafeMutablePointer<Void> {
  * This extension contains utility methods used in the tests above
  */
 extension XCTestCase {
+    struct Rand {
+        init() {
+            #if os(Linux)
+             srand(UInt32(time(nil)))
+            #endif
+        }
+        func random(count: UInt32) -> UInt32 {
+            #if os(Linux)
+                return UInt32(rand()) % count
+            #else
+                return arc4random_uniform(count)
+            #endif
+        }
+    }
+    static let random = Rand()
+    
     func expectation() -> XCTestExpectation {
         return self.expectation(withDescription: "no description")
     }
     
     func failingFuture<U>() -> Future<U> {
         return future {
-            usleep(arc4random_uniform(100))
+            usleep(XCTestCase.random.random(100))
             throw TestError.Recoverable
         }
     }
     
     func succeedingFuture<U>(val: U) -> Future<U> {
         return future {
-            usleep(arc4random_uniform(100))
+            usleep(XCTestCase.random.random(100))
             return val
         }
     }
