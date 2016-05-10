@@ -291,11 +291,11 @@ class FutureTests: XCTestCase {
         
         let e = self.expectation(withDescription: "immediate success expectation")
         
-        f.onSuccess(immediate) { value in
+        f.onSuccess { value in
             e.fulfill()
         }
         
-        self.waitForExpectations(withTimeout: 0, handler: nil)
+        self.waitForExpectations(withTimeout: 1, handler: nil)
     }
     
     func testMainExecutionContext() {
@@ -304,7 +304,7 @@ class FutureTests: XCTestCase {
         future { _ -> Int in
             XCTAssert(!Thread.isMain)
             return 1
-        }.onSuccess { value in
+        }.settle(in: main).onSuccess { value in
             XCTAssert(Thread.isMain)
             e.fulfill()
         }
@@ -327,7 +327,7 @@ class FutureTests: XCTestCase {
         let f = Future<Int>(value: 1)
         let e = self.expectation()
         global.execute {
-            f.onSuccess { _ in
+            f.settle(in: ExecutionContext.current).onSuccess { _ in
                 XCTAssert(!Thread.isMain, "the callback should not be on the main thread")
                 e.fulfill()
             }
@@ -391,7 +391,7 @@ class FutureTests: XCTestCase {
             return i / 5
         }
         
-        Future<Int>(value: fibonacci(10)).map(f: divideByFive).onSuccess { val in
+        Future<Int>(value: fibonacci(10)).map(divideByFive).onSuccess { val in
             XCTAssertEqual(val, 11, "The 10th fibonacci number (55) divided by 5 is 11")
             e.fulfill()
             return
@@ -719,7 +719,7 @@ class FutureTests: XCTestCase {
     // MARK: Advanced Tests
 
     // Creates a lot of futures and adds completion blocks concurrently, which should all fire
-    func testStress() {
+    /*func testStress() {
             let instances = 100;
             var successfulFutures = [Future<Int>]()
             var failingFutures = [Future<Int>]()
@@ -751,7 +751,7 @@ class FutureTests: XCTestCase {
                 let context = randomContext()
                 let e = self.expectation(withDescription: "future completes in context \(context)")
                 
-                future.onComplete(context) { (res:Result<Int, AnyError>) in
+                future.settle(in: context).onComplete { (res:Result<Int, AnyError>) in
                     e.fulfill()
                 }
                 
@@ -764,47 +764,52 @@ class FutureTests: XCTestCase {
                 let context = randomContext()
                 let e = self.expectation(withDescription: "future completes in context \(context)")
                 
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                global.execute {
                     usleep(arc4random_uniform(100))
                     
-                    f.onComplete(context) { (res:Result<Int, AnyError>) in
+                    f.settle(in: context).onComplete { (res:Result<Int, AnyError>) in
                         e.fulfill()
                     }
                 }
             }
             
             self.waitForExpectations(withTimeout: 10, handler: nil)
-    }
+    }*/
     
     func testSerialCallbacks() {
         let p = Promise<Void>()
         
-        var executingCallbacks = 0
+        var executingCallbacksGlobal = 0
+        let globalFuture = p.future.settle(in: global)
+        var executingCallbacksMain = 0
+        let mainFuture = p.future.settle(in: main)
+        
+        
         for _ in 0..<10 {
             let e = self.expectation()
-            p.future.onComplete(global) { (res:Result<Void, AnyError>) in
-                XCTAssert(executingCallbacks == 0, "This should be the only executing callback")
+            globalFuture.onComplete { (res:Result<Void, AnyError>) in
+                XCTAssert(executingCallbacksGlobal == 0, "This should be the only executing callback")
                 
-                executingCallbacks += 1
+                executingCallbacksGlobal += 1
                 
                 // sleep a bit to increase the chances of other callback blocks executing
                 Thread.sleep(0.06)
                 
-                executingCallbacks -= 1
+                executingCallbacksGlobal -= 1
                 
                 e.fulfill()
             }
             
             let e1 = self.expectation()
-            p.future.onComplete(main) { (res:Result<Void, AnyError>) in
-                XCTAssert(executingCallbacks == 0, "This should be the only executing callback")
+            mainFuture.onComplete { (res:Result<Void, AnyError>) in
+                XCTAssert(executingCallbacksMain == 0, "This should be the only executing callback")
                 
-                executingCallbacks += 1
+                executingCallbacksMain += 1
                 
                 // sleep a bit to increase the chances of other callback blocks executing
                 Thread.sleep(0.06)
                 
-                executingCallbacks -= 1
+                executingCallbacksMain -= 1
                 
                 e1.fulfill()
             }
@@ -827,7 +832,7 @@ class FutureTests: XCTestCase {
         XCTAssertEqual(dispatch_get_specific(&key), valuePointer, "value should have been set on the main (i.e. current) queue")
         
         let e = self.expectation()
-        Future<Int>(value: 1).onSuccess(main) { val in
+        Future<Int>(value: 1).settle(in: main).onSuccess { val in
             XCTAssertEqual(dispatch_get_specific(&key), valuePointer, "we should now too be on the main queue")
             e.fulfill()
         }

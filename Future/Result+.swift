@@ -45,11 +45,15 @@ internal extension Result {
 internal extension Result where Error : AnyErrorProtocol {
     func tryAsError<E : ErrorProtocol>() -> Result<T, E>? {
         return self.tryMapError { e -> E? in
-            switch e {
-            case let e as E:
+            if let e = asNoBridge(e.error, type:NSError.self).flatMap({$0 as? E}) {
                 return e
-            default:
-                return e.error as? E
+            } else {
+                switch e {
+                case let e as E:
+                    return e
+                default:
+                    return e.error as? E
+                }
             }
         }
     }

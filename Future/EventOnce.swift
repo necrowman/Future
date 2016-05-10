@@ -1,4 +1,4 @@
-//===--- Promise.swift ------------------------------------------------------===//
+//===--- EventOnce.swift ------------------------------------------------------===//
 //Copyright (c) 2016 Daniel Leping (dileping)
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +15,31 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import Boilerplate
-import Result
-import ExecutionContext
 
-public class Promise<V> : MutableFutureType {
-    public typealias Value = V
-    
-    private let _future:MutableFuture<V>
-    
-    public var future:Future<V> {
-        get {
-            return _future
+import Boilerplate
+import ExecutionContext
+import Result
+import Event
+
+public extension EventEmitterProtocol {
+    public func once<E : EventProtocol>(event: E, failOnError:(ErrorType)->Bool = {_ in true}) -> Future<E.Payload> {
+        let future = MutableFuture<E.Payload>(context: immediate)
+        
+        let offEvent = self.on(event).react { payload in
+            future.trySuccess(payload)
         }
-    }
-    
-    public init() {
-        _future = MutableFuture(context: immediate)
-    }
-    
-    public func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
-        return _future.tryComplete(result)
+        
+        let offError = self.on(.error).react { e in
+            if failOnError(e) {
+                future.tryFail(e)
+            }
+        }
+        
+        future.onComplete { (_:Result<E.Payload,AnyError>) in
+            offEvent()
+            offError()
+        }
+
+        return future
     }
 }

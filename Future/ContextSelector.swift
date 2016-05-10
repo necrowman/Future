@@ -20,17 +20,9 @@ import Boilerplate
 import ExecutionContext
 
 /// bool is if it is a continuation or initial 'future' call
-public typealias ContextSelector = (continuation:Bool)->ExecutionContextType
+public typealias ContextSelector = ()->ExecutionContextType
 
 /// default context selector implementation. Works for most scenarios. Don't change it if you are not 100% sure what you do
-public var contextSelector:ContextSelector = { continuation in
-    if continuation {
-        return immediate
-    } else {
-        if Thread.isMain {
-            return main
-        } else {
-            return global
-        }
-    }
+public var contextSelector:ContextSelector = {
+    return global
 }

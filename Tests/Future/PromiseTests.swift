@@ -101,7 +101,7 @@ class PromiseTests: XCTestCase {
         let p = Promise<Int>()
         let q = Promise<Int>()
         
-        p.completeWith(f: q.future)
+        p.completeWith(q.future)
         
         XCTAssert(!p.future.isCompleted)
         try! q.success(1)
@@ -112,7 +112,7 @@ class PromiseTests: XCTestCase {
         let p = Promise<Int>()
         let q = Promise<Int>()
         
-        p.completeWith(f: q.future)
+        p.completeWith(q.future)
         
         XCTAssert(!p.future.isCompleted)
         try! q.fail(TestError.Recoverable)
