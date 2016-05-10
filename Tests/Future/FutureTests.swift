@@ -17,6 +17,7 @@ import Foundation3
 
 #if os(Linux)
     import Glibc
+    import RunLoop
 #endif
 
 /*@testable*/ import Future
@@ -118,119 +119,124 @@ class FutureTests: XCTestCase {
     }
     
     func testFailedFuture() {
-        let error = NSError(domain: "test", code: 0, userInfo: nil)
-        let f = Future<Void>(error: error)
-        
         let completeExpectation = self.expectation(withDescription: "immediate complete")
-        
-        f.onComplete { (result:Result<Void, NSError>) in
-            switch result {
-            case .Success(_):
-                XCTAssert(false)
-            case .Failure(let err):
-                print("Error: \(err)")
-                XCTAssertEqual(err, error)
-            }
-            completeExpectation.fulfill()
-        }
-        
         let failureExpectation = self.expectation(withDescription: "immediate failure")
         
-        f.onFailure { (err:NSError) in
-            print("Error 2: \(err)")
-            XCTAssert(err.isEqual(error))
-            failureExpectation.fulfill()
-        }
-        
-        f.onSuccess { value in
-            XCTFail("success should not be called")
+        mQueue.sync {
+            let error = NSError(domain: "test", code: 0, userInfo: nil)
+            let f = Future<Void>(error: error)
+            
+            f.onComplete { (result:Result<Void, NSError>) in
+                switch result {
+                case .Success(_):
+                    XCTAssert(false)
+                case .Failure(let err):
+                    print("Error: \(err)")
+                    XCTAssertEqual(err, error)
+                }
+                completeExpectation.fulfill()
+            }
+            
+            f.onFailure { (err:NSError) in
+                print("Error 2: \(err)")
+                XCTAssert(err.isEqual(error))
+                failureExpectation.fulfill()
+            }
+            
+            f.onSuccess { value in
+                XCTFail("success should not be called")
+            }
         }
         
         self.waitForExpectations(withTimeout:2, handler: nil)
     }
     
     func testFutureBasic() {
-        let f = future {
-            return "716"
-        }
-        
-        f.onComplete { (result:Result<String, NoError>) in
-            print("1:", result.value!)
-        }
-        
-        f.onComplete { (result:Result<String, AnyError>) in
-            print("2:", result.value!)
-        }
-        
-        let f2:Future<String> = future {
-            throw TestError.Recoverable
-        }
-        
-        f2.onComplete { (result:Result<String, NoError>) in
-            print("SHOULD NOT PRINT")
-        }
-        
-        f2.onComplete { (result:Result<String, AnyError>) in
-            print("Any:", result.error!.error)
-        }
-        
-        f2.onComplete { (result:Result<String, TestError>) in
-            print("Typed:", result.error!)
-        }
-        
-        f2.onFailure { (e:TestError) in
-            print("EEEE!!!!EEEE:", e)
-        }
-        
-        f.flatMap { value in
-            Int(value)
-            }.onSuccess { value in
-                print("!@#$%^&OUR INT:", value)
-        }
-        
-        let f3 = f2.recover { e in
-            return "recovered"
-        }
-        
-        let f4 = f2.recover { (e:TestError) in
-            return "678"
-        }
-        
-        let f5 = f2.recoverWith { e in
-            return future {
-                return "819"
-            }
-        }
-        
-        let f6 = f2.recoverWith { e in
-            return Future(value: "347")
-        }
-        
-        f3.flatMap { str in
-            return Int(str)
-            }.onFailure { (e:Error) in
-                print("recovered 3:", e)
-        }
-        
-        f4.flatMap { str in
-            return Int(str)
-            }.onSuccess { value in
-                print("recovered 4:", value)
-        }
-        
-        f5.flatMap { str in
-            return Int(str)
-            }.onSuccess { value in
-                print("recovered 5:", value)
-        }
-        
         let exp = self.expectation(withDescription: "6")
         
-        f6.flatMap { str in
-            return Int(str)
-            }.onSuccess { value in
-                print("recovered 6:", value)
-                exp.fulfill()
+        mQueue.sync {
+            let f = future {
+                return "716"
+            }
+            
+            f.onComplete { (result:Result<String, NoError>) in
+                print("1:", result.value!)
+            }
+            
+            f.onComplete { (result:Result<String, AnyError>) in
+                print("2:", result.value!)
+            }
+            
+            let f2:Future<String> = future {
+                throw TestError.Recoverable
+            }
+            
+            f2.onComplete { (result:Result<String, NoError>) in
+                print("SHOULD NOT PRINT")
+            }
+            
+            f2.onComplete { (result:Result<String, AnyError>) in
+                print("Any:", result.error!.error)
+            }
+            
+            f2.onComplete { (result:Result<String, TestError>) in
+                print("Typed:", result.error!)
+            }
+            
+            f2.onFailure { (e:TestError) in
+                print("EEEE!!!!EEEE:", e)
+            }
+            
+            f.flatMap { value in
+                Int(value)
+                }.onSuccess { value in
+                    print("!@#$%^&OUR INT:", value)
+            }
+            
+            let f3 = f2.recover { e in
+                return "recovered"
+            }
+            
+            let f4 = f2.recover { (e:TestError) in
+                return "678"
+            }
+            
+            let f5 = f2.recoverWith { e in
+                return future {
+                    return "819"
+                }
+            }
+            
+            let f6 = f2.recoverWith { e in
+                return Future(value: "347")
+            }
+            
+            f3.flatMap { str in
+                return Int(str)
+                }.onFailure { (e:Error) in
+                    print("recovered 3:", e)
+            }
+            
+            f4.flatMap { str in
+                return Int(str)
+                }.onSuccess { value in
+                    print("recovered 4:", value)
+            }
+            
+            f5.flatMap { str in
+                return Int(str)
+                }.onSuccess { value in
+                    print("recovered 5:", value)
+            }
+            
+            
+            
+            f6.flatMap { str in
+                return Int(str)
+                }.onSuccess { value in
+                    print("recovered 6:", value)
+                    exp.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -241,12 +247,15 @@ class FutureTests: XCTestCase {
     
     func testControlFlowSyntax() {
         
-        let f = future {fibonacci(10)}
         let e = self.expectation(withDescription: "the computation succeeds")
         
-        f.onSuccess { value in
-            XCTAssert(value == 55)
-            e.fulfill()
+        mQueue.sync {
+            let f = future {fibonacci(10)}
+        
+            f.onSuccess { value in
+                XCTAssert(value == 55)
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 10, handler: nil)
@@ -254,15 +263,18 @@ class FutureTests: XCTestCase {
     
     func testControlFlowSyntaxWithError() {
         
-        let f : Future<String?> = future {
-            throw TestError.Recoverable
-        }
-        
         let failureExpectation = self.expectation(withDescription: "failure expected")
         
-        f.onFailure { error in
-            XCTAssert(error as? TestError == .Recoverable)
-            failureExpectation.fulfill()
+        mQueue.sync {
+        
+            let f : Future<String?> = future {
+                throw TestError.Recoverable
+            }
+        
+            f.onFailure { error in
+                XCTAssert(error as? TestError == .Recoverable)
+                failureExpectation.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout:3, handler: nil)
@@ -314,14 +326,16 @@ class FutureTests: XCTestCase {
     
     
     func testCustomExecutionContext() {
-        let f = future(immediate) {
-            fibonacci(10)
-        }
-        
         let e = self.expectation(withDescription: "immediate success expectation")
         
-        f.onSuccess { value in
-            e.fulfill()
+        mQueue.sync {
+            let f = future(immediate) {
+                fibonacci(10)
+            }
+        
+            f.onSuccess { value in
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 1, handler: nil)
@@ -338,6 +352,10 @@ class FutureTests: XCTestCase {
             e.fulfill()
         }
         
+        #if os(Linux)
+            (RunLoop.current as? RunnableRunLoopType)?.run(2)
+        #endif
+        
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
     
@@ -348,6 +366,10 @@ class FutureTests: XCTestCase {
             XCTAssert(Thread.isMain, "the callback should run on main")
             e.fulfill()
         }
+        
+        #if os(Linux)
+            (RunLoop.current as? RunnableRunLoopType)?.run(2)
+        #endif
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
@@ -361,6 +383,10 @@ class FutureTests: XCTestCase {
                 e.fulfill()
             }
         }
+        
+        #if os(Linux)
+            (RunLoop.current as? RunnableRunLoopType)?.run(2)
+        #endif
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
