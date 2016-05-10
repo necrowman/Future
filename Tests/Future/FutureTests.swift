@@ -36,7 +36,12 @@ func fibonacci(n: Int) -> Int {
 }
 
 func getMutablePointer(object: AnyObject) -> UnsafeMutablePointer<Void> {
-    return UnsafeMutablePointer<Void>(Unmanaged.passUnretained(object).toOpaque())
+    var obj = object
+    var p:UnsafeMutablePointer<Void> = nil
+    withUnsafeMutablePointer(&obj) {
+        p = UnsafeMutablePointer<Void>($0)
+    }
+    return p
 }
 
 /**
@@ -845,8 +850,8 @@ class FutureTests: XCTestCase {
     #if !os(Linux) || dispatch
     // Test for https://github.com/Thomvis/BrightFutures/issues/18
     func testCompletionBlockOnMainQueue() {
-        var key = "mainqueuespecifickey"
-        let value = "value"
+        var key = "mainqueuespecifickey" as NSString
+        let value = "value" as NSString
         let valuePointer = getMutablePointer(value)
         
         
