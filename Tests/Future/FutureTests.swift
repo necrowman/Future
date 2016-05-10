@@ -32,7 +32,7 @@ func fibonacci(n: Int) -> Int {
 }
 
 func getMutablePointer(object: AnyObject) -> UnsafeMutablePointer<Void> {
-    return UnsafeMutablePointer<Void>(bitPattern: Int(ObjectIdentifier(object).uintValue))
+    return UnsafeMutablePointer<Void>(Unmanaged.passUnretained(object).toOpaque())
 }
 
 /**
