@@ -338,7 +338,7 @@ class FutureTests: XCTestCase {
             }
         }
         
-        self.waitForExpectations(withTimeout: 1, handler: nil)
+        self.waitForExpectations(withTimeout: 2, handler: nil)
     }
     
     func testMainExecutionContext() {
@@ -446,10 +446,12 @@ class FutureTests: XCTestCase {
             return i / 5
         }
         
-        Future<Int>(value: fibonacci(10)).map(divideByFive).onSuccess { val in
-            XCTAssertEqual(val, 11, "The 10th fibonacci number (55) divided by 5 is 11")
-            e.fulfill()
-            return
+        mQueue.sync {
+            Future<Int>(value: fibonacci(10)).map(divideByFive).onSuccess { val in
+                XCTAssertEqual(val, 11, "The 10th fibonacci number (55) divided by 5 is 11")
+                e.fulfill()
+                return
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
