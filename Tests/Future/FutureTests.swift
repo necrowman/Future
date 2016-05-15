@@ -123,9 +123,42 @@ class FutureTests: XCTestCase {
         let failureExpectation = self.expectation(withDescription: "immediate failure")
         
         mQueue.sync {
-            let error = NSError(domain: "test", code: 0, userInfo: nil)
+            let error = TestError.Recoverable
             let f = Future<Void>(error: error)
             
+            f.onComplete { (result:Result<Void, TestError>) in
+                switch result {
+                case .Success(_):
+                    XCTAssert(false)
+                case .Failure(let err):
+                    print("Error: \(err)")
+                    XCTAssertEqual(err, error)
+                }
+                completeExpectation.fulfill()
+            }
+            
+            f.onFailure { (err:TestError) in
+                print("Error 2: \(err)")
+                XCTAssert(err == error)
+                failureExpectation.fulfill()
+            }
+            
+            f.onSuccess { value in
+                XCTFail("success should not be called")
+            }
+        }
+        
+        self.waitForExpectations(withTimeout:2, handler: nil)
+    }
+    
+    #if !os(Linux) // Swift on linux has crashes with NSError
+    func testNSError() {
+        let completeExpectation = self.expectation(withDescription: "immediate complete")
+        let failureExpectation = self.expectation(withDescription: "immediate failure")
+        
+        mQueue.sync {
+            let error = NSError(domain: "test", code: 101, userInfo: nil)
+            let f = Future<Void>(error:error)
             f.onComplete { (result:Result<Void, NSError>) in
                 switch result {
                 case .Success(_):
@@ -147,9 +180,40 @@ class FutureTests: XCTestCase {
                 XCTFail("success should not be called")
             }
         }
-        
-        self.waitForExpectations(withTimeout:2, handler: nil)
     }
+    
+    func testNSErrorThrow() {
+        let completeExpectation = self.expectation(withDescription: "immediate complete")
+        let failureExpectation = self.expectation(withDescription: "immediate failure")
+        
+        mQueue.sync {
+            let error = NSError(domain: "test", code: 101, userInfo: nil)
+            let f = future {
+                throw error
+            }
+            f.onComplete { (result:Result<Void, NSError>) in
+                switch result {
+                case .Success(_):
+                    XCTAssert(false)
+                case .Failure(let err):
+                    print("Error: \(err)")
+                    XCTAssertEqual(err, error)
+                }
+                completeExpectation.fulfill()
+            }
+            
+            f.onFailure { (err:NSError) in
+                print("Error 2: \(err)")
+                XCTAssert(err.isEqual(error))
+                failureExpectation.fulfill()
+            }
+            
+            f.onSuccess { value in
+                XCTFail("success should not be called")
+            }
+        }
+    }
+    #endif
     
     func testFutureBasic() {
         let exp = self.expectation(withDescription: "6")
@@ -485,14 +549,14 @@ class FutureTests: XCTestCase {
         
         let e = self.expectation()
         
-        future { () -> Result <Int, NSError> in
-            Result(error: NSError(domain: "Tests", code: 123, userInfo: nil))
+        future { () -> Result <Int, TestError> in
+            Result(error: TestError.Recoverable)
         }.map { number in
             XCTAssert(false, "map should not be evaluated because of failure above")
         }.map { number in
             XCTAssert(false, "this map should also not be evaluated because of failure above")
-        }.onFailure { (error:NSError) -> Void in
-            XCTAssert(error.domain == "Tests")
+        }.onFailure { (error:TestError) -> Void in
+            XCTAssertEqual(error, TestError.Recoverable)
             e.fulfill()
         }
         
@@ -554,7 +618,7 @@ class FutureTests: XCTestCase {
         let e = self.expectation()
         
         future {
-            Result(error: NSError(domain: "NaN", code: 0, userInfo: nil))
+            Result(error: TestError.Recoverable)
         }.recoverWith { _ in
             return future { _ in
                 fibonacci(5)
@@ -566,7 +630,7 @@ class FutureTests: XCTestCase {
         
 //        let e1 = self.expectation()
 //        
-//        let f: Future<Int, NoError> = Future<Int, NSError>(error: NSError(domain: "NaN", code: 0, userInfo: nil)) ?? future(fibonacci(5))
+//        let f: Future<Int, NoError> = Future<Int, TestError>(error: TestError.Recoverable) ?? future(fibonacci(5))
 //        
 //        f.onSuccess {
 //            XCTAssertEqual($0, 5)
@@ -605,9 +669,9 @@ class FutureTests: XCTestCase {
 //    }
     
 //    func testZipThisFails() {
-//        let f: Future<Bool> = future { () -> Result<Bool,NSError> in
+//        let f: Future<Bool> = future { () -> Result<Bool,TestError> in
 //            Thread.sleep(1)
-//            return Result(error: NSError(domain: "test", code: 2, userInfo: nil))
+//            return Result(error: TestError.Recoverable)
 //        }
 //        
 //        let f1 = Future<Int>(value: 2)
@@ -615,8 +679,7 @@ class FutureTests: XCTestCase {
 //        let e = self.expectation()
 //        
 //        f.zip(f1).onFailure { error in
-//            XCTAssert(error.domain == "test")
-//            XCTAssertEqual(error.code, 2)
+//            XCTAssertEqual(error, TestError.Recoverable)
 //            e.fulfill()
 //        }
 //        
@@ -624,9 +687,9 @@ class FutureTests: XCTestCase {
 //    }
     
 //    func testZipThatFails() {
-//        let f = future { () -> Result<Int,NSError> in
+//        let f = future { () -> Result<Int,TestError> in
 //            Thread.sleep(1)
-//            return Result(error: NSError(domain: "tester", code: 3, userInfo: nil))
+//            return Result(error: TestError.Recoverable)
 //        }
 //        
 //        let f1 = Future<Int>(value: 2)
@@ -634,8 +697,7 @@ class FutureTests: XCTestCase {
 //        let e = self.expectation()
 //        
 //        f1.zip(f).onFailure { error in
-//            XCTAssert(error.domain == "tester")
-//            XCTAssertEqual(error.code, 3)
+//            XCTAssertEqual(error, TestError.Recoverable)
 //            e.fulfill()
 //        }
 //        
@@ -643,21 +705,20 @@ class FutureTests: XCTestCase {
 //    }
     
 //    func testZipBothFail() {
-//        let f = future { () -> Result<Int,NSError> in
+//        let f = future { () -> Result<Int,TestError> in
 //            Thread.sleep(1)
-//            return Result(error: NSError(domain: "f-error", code: 3, userInfo: nil))
+//            return Result(error: TestError.Recoverable)
 //        }
 //        
-//        let f1 = future { () -> Result<Int,NSError> in
+//        let f1 = future { () -> Result<Int,TestError> in
 //            Thread.sleep(1)
-//            return Result(error: NSError(domain: "f1-error", code: 4, userInfo: nil))
+//            return Result(error: TesError.Fatal)
 //        }
 //        
 //        let e = self.expectation()
 //        
 //        f.zip(f1).onFailure { error in
-//            XCTAssert(error.domain == "f-error")
-//            XCTAssertEqual(error.code, 3)
+//            XCTAssertEqual(error, TestError.Recoverable)
 //            e.fulfill()
 //        }
 //        
