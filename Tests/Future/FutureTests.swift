@@ -180,6 +180,7 @@ class FutureTests: XCTestCase {
                 XCTFail("success should not be called")
             }
         }
+        self.waitForExpectations(withTimeout:2, handler: nil)
     }
     
     func testNSErrorThrow() {
@@ -212,6 +213,7 @@ class FutureTests: XCTestCase {
                 XCTFail("success should not be called")
             }
         }
+        self.waitForExpectations(withTimeout:2, handler: nil)
     }
     #endif
     
@@ -392,15 +394,17 @@ class FutureTests: XCTestCase {
     func testCustomExecutionContext() {
         let e = self.expectation(withDescription: "immediate success expectation")
         
-        mQueue.sync {
-            let f = future(immediate) {
-                fibonacci(10)
-            }
-        
-            f.onSuccess { value in
-                e.fulfill()
-            }
+        let f = future(immediate) {
+            fibonacci(10)
         }
+        
+        f.onSuccess { value in
+            e.fulfill()
+        }
+        
+        #if os(Linux)
+            (RunLoop.current as? RunnableRunLoopType)?.run(2)
+        #endif
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
@@ -524,22 +528,24 @@ class FutureTests: XCTestCase {
     func testMapSuccess() {
         let e = self.expectation()
         
-        // Had to split here to lets. It feels like swift compiler has a bug and can not do this chain in full
-        // Hopefully they will resolve the issue in the next versions and soon enough
-        // No details (like particular types) were added on top though
-        // Actually it still is quite a rare case when you map a just created future
-        future {
-            fibonacci(10)
-        }.map { value -> String in
-            if value > 5 {
-                return "large"
+        mQueue.sync {
+            // Had to split here to lets. It feels like swift compiler has a bug and can not do this chain in full
+            // Hopefully they will resolve the issue in the next versions and soon enough
+            // No details (like particular types) were added on top though
+            // Actually it still is quite a rare case when you map a just created future
+            future {
+                fibonacci(10)
+            }.map { value -> String in
+                if value > 5 {
+                    return "large"
+                }
+                return "small"
+            }.map { sizeString -> Bool in
+                return sizeString == "large"
+            }.onSuccess { numberIsLarge in
+                XCTAssert(numberIsLarge)
+                e.fulfill()
             }
-            return "small"
-        }.map { sizeString -> Bool in
-            return sizeString == "large"
-        }.onSuccess { numberIsLarge in
-            XCTAssert(numberIsLarge)
-            e.fulfill()
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -549,15 +555,17 @@ class FutureTests: XCTestCase {
         
         let e = self.expectation()
         
-        future { () -> Result <Int, TestError> in
-            Result(error: TestError.Recoverable)
-        }.map { number in
-            XCTAssert(false, "map should not be evaluated because of failure above")
-        }.map { number in
-            XCTAssert(false, "this map should also not be evaluated because of failure above")
-        }.onFailure { (error:TestError) -> Void in
-            XCTAssertEqual(error, TestError.Recoverable)
-            e.fulfill()
+        mQueue.sync {
+            future { () -> Result <Int, TestError> in
+                Result(error: TestError.Recoverable)
+            }.map { number in
+                XCTAssert(false, "map should not be evaluated because of failure above")
+            }.map { number in
+                XCTAssert(false, "this map should also not be evaluated because of failure above")
+            }.onFailure { (error:TestError) -> Void in
+                XCTAssertEqual(error, TestError.Recoverable)
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -565,22 +573,26 @@ class FutureTests: XCTestCase {
     
     func testRecover() {
         let e = self.expectation()
-        Future<Int>(error: TestError.Recoverable).recover { _ in
-            return 3
-        }.onSuccess { val in
-            XCTAssertEqual(val, 3)
-            e.fulfill()
-        }
+//      let e1 = self.expectation()
         
-//        let recov: () -> Int = {
-//            return 5
-//        }
+        mQueue.sync {
+            Future<Int>(error: TestError.Recoverable).recover { _ in
+                return 3
+            }.onSuccess { val in
+                XCTAssertEqual(val, 3)
+                e.fulfill()
+            }
+        
+//          let recov: () -> Int = {
+//              return 5
+//          }
 //        
-//        let e1 = self.expectation()
-//        (Future<Int>(error: TestError.Recoverable) ?? recov()).onSuccess { value in
-//            XCTAssert(value == 5)
-//            e1.fulfill()
-//        }
+
+//          (Future<Int>(error: TestError.Recoverable) ?? recov()).onSuccess { value in
+//              XCTAssert(value == 5)
+//              e1.fulfill()
+//          }
+        }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
@@ -588,28 +600,30 @@ class FutureTests: XCTestCase {
     func testSkippedRecover() {
         let e = self.expectation()
         
-        future {
-            3
-        }.recover { _ in
-            XCTFail("recover task should not be executed")
-            return 5
-        }.onSuccess { value in
-            XCTAssert(value == 3)
-            e.fulfill()
-        }
+        mQueue.sync {
+            future {
+                3
+            }.recover { _ in
+                XCTFail("recover task should not be executed")
+                return 5
+            }.onSuccess { value in
+                XCTAssert(value == 3)
+                e.fulfill()
+            }
         
-//        let e1 = self.expectation()
+//          let e1 = self.expectation()
 //        
 //        
-//        let recov: () -> Int = {
-//            XCTFail("recover task should not be executed")
-//            return 5
-//        }
+//          let recov: () -> Int = {
+//              XCTFail("recover task should not be executed")
+//              return 5
+//          }
 //        
-//        (future(3) ?? recov()).onSuccess { value in
-//            XCTAssert(value == 3)
-//            e1.fulfill()
-//        }
+//          (future(3) ?? recov()).onSuccess { value in
+//              XCTAssert(value == 3)
+//              e1.fulfill()
+//          }
+        }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
@@ -617,25 +631,27 @@ class FutureTests: XCTestCase {
     func testRecoverWith() {
         let e = self.expectation()
         
-        future {
-            Result(error: TestError.Recoverable)
-        }.recoverWith { _ in
-            return future { _ in
-                fibonacci(5)
+        mQueue.sync {
+            future {
+                Result(error: TestError.Recoverable)
+            }.recoverWith { _ in
+                return future { _ in
+                    fibonacci(5)
+                }
+            }.onSuccess { value in
+                XCTAssert(value == 5)
+                e.fulfill()
             }
-        }.onSuccess { value in
-            XCTAssert(value == 5)
-            e.fulfill()
-        }
         
-//        let e1 = self.expectation()
+//          let e1 = self.expectation()
 //        
-//        let f: Future<Int, NoError> = Future<Int, TestError>(error: TestError.Recoverable) ?? future(fibonacci(5))
+//          let f: Future<Int, NoError> = Future<Int, TestError>(error: TestError.Recoverable) ?? future(fibonacci(5))
 //        
-//        f.onSuccess {
-//            XCTAssertEqual($0, 5)
-//            e1.fulfill()
-//        }
+//          f.onSuccess {
+//              XCTAssertEqual($0, 5)
+//              e1.fulfill()
+//          }
+        }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
@@ -643,11 +659,13 @@ class FutureTests: XCTestCase {
     func testRecoverThrowError() {
         let e = self.expectation()
         
-        Future<Int>(error: TestError.Recoverable).recover { (error: TestError) in
-            throw TestError.Fatal
-        }.onFailure { (error:TestError) in
-            XCTAssertEqual(error, TestError.Fatal)
-            e.fulfill()
+        mQueue.sync {
+            Future<Int>(error: TestError.Recoverable).recover { (error: TestError) in
+                throw TestError.Fatal
+            }.onFailure { (error:TestError) in
+                XCTAssertEqual(error, TestError.Fatal)
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -791,13 +809,15 @@ class FutureTests: XCTestCase {
         
         let finalString = "Greg"
         
-        let flatMapped = Future<String>(value: "Thomas").flatMap { _ in
-            return Future<String>(value: finalString)
-        }
+        mQueue.sync {
+            let flatMapped = Future<String>(value: "Thomas").flatMap { _ in
+                return Future<String>(value: finalString)
+            }
         
-        flatMapped.onSuccess { s in
-            XCTAssertEqual(s, finalString, "strings are not equal")
-            e.fulfill()
+            flatMapped.onSuccess { s in
+                XCTAssertEqual(s, finalString, "strings are not equal")
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -824,11 +844,13 @@ class FutureTests: XCTestCase {
     func testFlatMapResult() {
         let e = self.expectation()
         
-        Future<Int>(value: 3).flatMap { _ in
-            Result<Int, AnyError>(value: 22)
-        }.onSuccess { val in
-            XCTAssertEqual(val, 22)
-            e.fulfill()
+        mQueue.sync {
+            Future<Int>(value: 3).flatMap { _ in
+                Result<Int, AnyError>(value: 22)
+            }.onSuccess { val in
+                XCTAssertEqual(val, 22)
+                e.fulfill()
+            }
         }
         
         self.waitForExpectations(withTimeout: 2, handler: nil)
@@ -934,6 +956,10 @@ class FutureTests: XCTestCase {
         }
         
         p.trySuccess()
+        
+        #if os(Linux)
+            (RunLoop.current as? RunnableRunLoopType)?.run(5)
+        #endif
         
         self.waitForExpectations(withTimeout: 5, handler: nil)
     }
