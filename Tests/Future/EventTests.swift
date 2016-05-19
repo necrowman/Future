@@ -8,12 +8,13 @@
 
 import XCTest
 import XCTest3
+import Boilerplate
 
 import ExecutionContext
 import Event
 import Future
 
-enum TestOnceError : ErrorType {
+enum TestOnceError : ErrorProtocol {
     case some
     case substitute
 }
@@ -43,7 +44,7 @@ class EventEmitterTest : EventEmitterProtocol {
         return self.on(groupedEvent.event)
     }
     
-    func once<E : EventProtocol>(groupedEvent: TestEventGroup<E>, failOnError:(ErrorType)->Bool = {_ in true}) -> Future<E.Payload> {
+    func once<E : EventProtocol>(groupedEvent: TestEventGroup<E>, failOnError:(ErrorProtocol)->Bool = {_ in true}) -> Future<E.Payload> {
         return self.once(groupedEvent.event, failOnError: failOnError)
     }
     
@@ -54,61 +55,82 @@ class EventEmitterTest : EventEmitterProtocol {
 
 class EventTests: XCTestCase {
     let reference = "sendme"
-    let em = EventEmitterTest()
+    
+    let mQueue = ExecutionContext(kind: .serial)
     
     func testOnceSuccess() {
-        let future = em.once(.string)
         
         let expectation = self.expectation(withDescription: "success")
         
-        var counter = 0
-        
-        future.onSuccess { s in
-            XCTAssertEqual(counter, 0)
-            counter += 1
-            XCTAssertEqual(s, self.reference)
-            expectation.fulfill()
+        mQueue.sync {
+            let em = EventEmitterTest()
+            
+            let future = em.once(.string)
+            
+            var counter = 0
+            
+            future.onSuccess { s in
+                XCTAssertEqual(counter, 0)
+                counter += 1
+                XCTAssertEqual(s, self.reference)
+                expectation.fulfill()
+            }
+            
+            future.onFailure { _ in
+                XCTFail("should not reach here")
+            }
+            
+            em.emit(.string, payload: self.reference)
+            em.emit(.string, payload: self.reference + "some")
+            em.emit(.error, payload: TestOnceError.some)
         }
-        
-        future.onFailure { _ in
-            XCTFail("should not reach here")
-        }
-        
-        em.emit(.string, payload: reference)
-        em.emit(.string, payload: reference + "some")
-        em.emit(.error, payload: TestOnceError.some)
         
         self.waitForExpectations(withTimeout: 1)
     }
     
     func testOnceFailed() {
-        let future = em.once(.string) { e in
-            let e = e as? TestOnceError
-            return e.map({$0 == .some}) ?? false
-        }
-        
         let expectation = self.expectation(withDescription: "success")
         
-        var counter = 0
-        
-        future.onSuccess { s in
-            XCTFail("should not reach here")
-        }
-        
-        future.onFailure { e in
-            XCTAssertEqual(counter, 0)
-            counter += 1
+        mQueue.sync {
+            let em = EventEmitterTest()
             
-            XCTAssertEqual(e as? TestOnceError, TestOnceError.some)
+            let future = em.once(.string) { e in
+                let e = e as? TestOnceError
+                return e.map({$0 == .some}) ?? false
+            }
             
-            expectation.fulfill()
+            var counter = 0
+            
+            future.onSuccess { s in
+                XCTFail("should not reach here")
+            }
+            
+            future.onFailure { e in
+                XCTAssertEqual(counter, 0)
+                counter += 1
+                
+                XCTAssertEqual(e as? TestOnceError, TestOnceError.some)
+                
+                expectation.fulfill()
+            }
+            
+            em.emit(.error, payload: TestOnceError.substitute)
+            em.emit(.error, payload: TestOnceError.some)
+            em.emit(.string, payload: self.reference)
+            em.emit(.string, payload: self.reference + "some")
         }
-        
-        em.emit(.error, payload: TestOnceError.substitute)
-        em.emit(.error, payload: TestOnceError.some)
-        em.emit(.string, payload: reference)
-        em.emit(.string, payload: reference + "some")
         
         self.waitForExpectations(withTimeout: 1)
     }
 }
+
+#if os(Linux)
+extension EventTests {
+	static var allTests : [(String, EventTests -> () throws -> Void)] {
+		return [
+			("testOnceSuccess", testOnceSuccess),
+			("testOnceFailed", testOnceFailed),
+		]
+	}
+}
+#endif
