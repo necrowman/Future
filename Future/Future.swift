@@ -34,7 +34,7 @@ public protocol FutureType : ExecutionContextTenantProtocol {
 public class Future<V> : FutureType {
     public typealias Value = V
     
-    private let chain:TaskChain
+    private var _chain:TaskChain?
     private var _resolver:ExecutionContextType?
     internal var result:Result<Value, AnyError>? = nil {
         didSet {
@@ -44,10 +44,11 @@ public class Future<V> : FutureType {
                 /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                 let context = selectContext()
                 
-                chain.append { next in
+                _chain!.append { next in
                     return { context in
                         admin.execute {
                             self._resolver = context
+                            self._chain = nil
                             context.execute {
                                 next.content?(context)
                             }
@@ -55,7 +56,7 @@ public class Future<V> : FutureType {
                     }
                 }
                 
-                chain.perform(context)
+                _chain!.perform(context)
             }
         }
     }
@@ -65,7 +66,7 @@ public class Future<V> : FutureType {
     private (set) public var isCompleted:Bool = false
     
     internal init(context:ExecutionContextType) {
-        self.chain = TaskChain()
+        self._chain = TaskChain()
         self.context = context
     }
     
@@ -82,6 +83,7 @@ public class Future<V> : FutureType {
         self.result = result.asAnyError()
         self.isCompleted = true
         self._resolver = selectContext()
+        self._chain = nil
     }
     
     private func selectContext() -> ExecutionContextType {
@@ -98,7 +100,7 @@ public class Future<V> : FutureType {
                     }
                 }
             } else {
-                self.chain.append { next in
+                self._chain!.append { next in
                     return { context in
                         let mapped:Result<Value, E>? = self.result!.tryAsError()
                         

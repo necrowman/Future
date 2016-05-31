@@ -985,6 +985,80 @@ class FutureTests: XCTestCase {
     }
     #endif
     
+    class DeinitMockObject {
+        let _expectation:XCTestExpectation
+        
+        init(_ expectation:XCTestExpectation) {
+            self._expectation = expectation
+        }
+        
+        deinit {
+            _expectation.fulfill()
+        }
+    }
+    
+    func testFutureFunReleasesObject() {
+        let finish = self.expectationWithDescription("finish")
+        
+        repeat {
+            let expectation = self.expectationWithDescription("deinit")
+            let f = future {
+                DeinitMockObject(expectation)
+            }
+            f.onSuccess { _ in
+                finish.fulfill()
+            }
+        } while false
+        
+        self.waitForExpectations(withTimeout: 1)
+    }
+    
+    func testPromiseInContextReleasesObject() {
+        let finish = self.expectationWithDescription("finish")
+        
+        repeat {
+            let expectation = self.expectationWithDescription("deinit")
+            let p = Promise<DeinitMockObject>()
+            p.future.onSuccess { _ in
+                finish.fulfill()
+            }
+            global.execute {
+                p.trySuccess(DeinitMockObject(expectation))
+            }
+        } while false
+        
+        self.waitForExpectations(withTimeout: 1)
+    }
+    
+    func testPromiseReleasesObject() {
+        let finish = self.expectationWithDescription("finish")
+        
+        repeat {
+            let expectation = self.expectationWithDescription("deinit")
+            let p = Promise<DeinitMockObject>()
+            p.future.onSuccess { _ in
+                finish.fulfill()
+            }
+            p.trySuccess(DeinitMockObject(expectation))
+        } while false
+        
+        self.waitForExpectations(withTimeout: 1)
+    }
+    
+    func testFutureReleasesObject() {
+        let finish = self.expectationWithDescription("finish")
+        
+        repeat {
+            let expectation = self.expectationWithDescription("deinit")
+            let f = Future<DeinitMockObject>(value: DeinitMockObject(expectation))
+            f.onSuccess { _ in
+                finish.fulfill()
+            }
+        } while false
+        
+        self.waitForExpectations(withTimeout: 0)
+    }
+    
 //    func testRelease() {
 //        weak var f: Future<Int>? = nil
 //        
