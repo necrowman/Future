@@ -21,24 +21,24 @@ import Boilerplate
 import ExecutionContext
 
 public extension FutureType {
-    public func onSuccess(f: Value -> Void) {
-        self.onComplete { (result:Result<Value, AnyError>) in
+    public func onSuccess(f: Value -> Void) -> Self {
+        return self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 f(value)
             }, ifFailure: {_ in})
         }
     }
     
-    public func onFailure<E : ErrorProtocol>(f: E -> Void) {
-        self.onComplete { (result:Result<Value, E>) in
+    public func onFailure<E : ErrorProtocol>(f: E -> Void) -> Self{
+        return self.onComplete { (result:Result<Value, E>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error)
             })
         }
     }
     
-    public func onFailure(f: ErrorProtocol -> Void) {
-        self.onComplete { (result:Result<Value, AnyError>) in
+    public func onFailure(f: ErrorProtocol -> Void) -> Self {
+        return self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error.error)
             })
