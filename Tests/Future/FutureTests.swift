@@ -671,77 +671,77 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
     
-//    func testZip() {
-//        let f = Future<Int>(value: 1)
-//        let f1 = Future<Int>(value: 2)
-//        
-//        let e = self.expectation()
-//        
-//        f.zip(f1).onSuccess { (let a, let b) in
-//            XCTAssertEqual(a, 1)
-//            XCTAssertEqual(b, 2)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testZip() {
+        let f = Future<Int>(value: 1)
+        let f1 = Future<Int>(value: 2)
+        
+        let e = self.expectation()
+        
+        f.zip(f1).onSuccess { (let a, let b) in
+            XCTAssertEqual(a, 1)
+            XCTAssertEqual(b, 2)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
-//    func testZipThisFails() {
-//        let f: Future<Bool> = future { () -> Result<Bool,TestError> in
-//            Thread.sleep(1)
-//            return Result(error: TestError.Recoverable)
-//        }
-//        
-//        let f1 = Future<Int>(value: 2)
-//        
-//        let e = self.expectation()
-//        
-//        f.zip(f1).onFailure { error in
-//            XCTAssertEqual(error, TestError.Recoverable)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testZipThisFails() {
+        let f: Future<Bool> = future { () -> Result<Bool,TestError> in
+            Thread.sleep(1)
+            return Result(error: TestError.Recoverable)
+        }
+        
+        let f1 = Future<Int>(value: 2)
+        
+        let e = self.expectation()
+        
+        f.zip(f1).onFailure { (error:TestError) in
+            XCTAssertEqual(error, TestError.Recoverable)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
-//    func testZipThatFails() {
-//        let f = future { () -> Result<Int,TestError> in
-//            Thread.sleep(1)
-//            return Result(error: TestError.Recoverable)
-//        }
-//        
-//        let f1 = Future<Int>(value: 2)
-//        
-//        let e = self.expectation()
-//        
-//        f1.zip(f).onFailure { error in
-//            XCTAssertEqual(error, TestError.Recoverable)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testZipThatFails() {
+        let f = future { () -> Result<Int,TestError> in
+            Thread.sleep(1)
+            return Result(error: TestError.Recoverable)
+        }
+        
+        let f1 = Future<Int>(value: 2)
+        
+        let e = self.expectation()
+        
+        f1.zip(f).onFailure { (error:TestError) in
+            XCTAssertEqual(error, TestError.Recoverable)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
-//    func testZipBothFail() {
-//        let f = future { () -> Result<Int,TestError> in
-//            Thread.sleep(1)
-//            return Result(error: TestError.Recoverable)
-//        }
-//        
-//        let f1 = future { () -> Result<Int,TestError> in
-//            Thread.sleep(1)
-//            return Result(error: TesError.Fatal)
-//        }
-//        
-//        let e = self.expectation()
-//        
-//        f.zip(f1).onFailure { error in
-//            XCTAssertEqual(error, TestError.Recoverable)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testZipBothFail() {
+        let f = future { () -> Result<Int,TestError> in
+            Thread.sleep(1)
+            return Result(error: TestError.Recoverable)
+        }
+        
+        let f1 = future { () -> Result<Int,TestError> in
+            Thread.sleep(1)
+            return Result(error: TestError.Fatal)
+        }
+        
+        let e = self.expectation()
+        
+        f.zip(f1).onFailure { (error:TestError) in
+            XCTAssertEqual(error, TestError.Recoverable)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
 //    func testFilterNoSuchElement() {
 //        let e = self.expectation()

@@ -183,4 +183,29 @@ public extension FutureType {
         
         return future
     }
+    
+    public func zip<B, F : FutureType where F.Value == B>(f:F) -> Future<(Value, B)> {
+        let future = MutableFuture<(Value, B)>(context: self.context)
+        
+        self.onComplete { (result:Result<Value, AnyError>) in
+            let context = ExecutionContext.current
+            
+            result.analysis(ifSuccess: { first -> Void in
+                f.onComplete { (result:Result<B, AnyError>) in
+                    context.execute {
+                        result.analysis(ifSuccess: { second in
+                            try! future.success((first, second))
+                        }, ifFailure: { e in
+                            try! future.fail(e.error)
+                        })
+                    }
+                }
+                
+            }, ifFailure: { e in
+                try! future.fail(e.error)
+            })
+        }
+        
+        return future
+    }
 }
