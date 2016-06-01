@@ -823,23 +823,23 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
     
-//    func testFlatMapByPassingFunction() {
-//        let e = self.expectation()
-//        
-//        func toString(n: Int) -> Future<String> {
-//            return Future<String>(value: "\(n)")
-//        }
-//        
-//        let n = 1
-//        let flatMapped = Future<Int>(value: n).flatMap(toString)
-//        
-//        flatMapped.onSuccess { s in
-//            XCTAssertEqual(s, "\(n)", "strings are not equal")
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testFlatMapByPassingFunction() {
+        let e = self.expectation()
+        
+        func toString(n: Int) -> Future<String> {
+            return Future<String>(value: "\(n)")
+        }
+        
+        let n = 1
+        let flatMapped = Future<Int>(value: n).flatMap(toString)
+        
+        flatMapped.onSuccess { s in
+            XCTAssertEqual(s, "\(n)", "strings are not equal")
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
     func testFlatMapResult() {
         let e = self.expectation()
