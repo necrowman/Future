@@ -91,6 +91,11 @@ public class Future<V> : FutureType {
     }
     
     public func onComplete<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self {
+        return self.onCompleteInternal(callback)
+    }
+    
+    //to avoid endless recursion
+    internal func onCompleteInternal<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self {
         admin.execute {
             if let resolver = self._resolver {
                 let mapped:Result<Value, E>? = self.result!.tryAsError()

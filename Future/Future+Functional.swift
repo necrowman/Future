@@ -20,6 +20,12 @@ import Result
 import Boilerplate
 import ExecutionContext
 
+public extension Future {
+    public func onComplete(callback: Result<Value, AnyError> -> Void) -> Self {
+        return self.onCompleteInternal(callback)
+    }
+}
+
 public extension FutureType {
     public func onSuccess(f: Value -> Void) -> Self {
         return self.onComplete { (result:Result<Value, AnyError>) in

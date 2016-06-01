@@ -95,7 +95,7 @@ class FutureTests: XCTestCase {
         mQueue.sync {
             let f = Future<Int>(value: 2)
         
-            f.onComplete { (result:Result<Int,AnyError>) in
+            f.onComplete { result in
                 XCTAssert(result.value != nil)
                 completeExpectation.fulfill()
             }
@@ -229,7 +229,7 @@ class FutureTests: XCTestCase {
                 print("1:", result.value!)
             }
             
-            f.onComplete { (result:Result<String, AnyError>) in
+            f.onComplete { result in
                 print("2:", result.value!)
             }
             
@@ -241,7 +241,7 @@ class FutureTests: XCTestCase {
                 print("SHOULD NOT PRINT")
             }
             
-            f2.onComplete { (result:Result<String, AnyError>) in
+            f2.onComplete { result in
                 print("Any:", result.error!.error)
             }
             
@@ -927,7 +927,7 @@ class FutureTests: XCTestCase {
         
         for _ in 0..<10 {
             let e = self.expectation()
-            globalFuture.onComplete { (res:Result<Void, AnyError>) in
+            globalFuture.onComplete { _ in
                 XCTAssert(executingCallbacksGlobal == 0, "This should be the only executing callback")
                 
                 executingCallbacksGlobal += 1
@@ -941,7 +941,7 @@ class FutureTests: XCTestCase {
             }
             
             let e1 = self.expectation()
-            mainFuture.onComplete { (res:Result<Void, AnyError>) in
+            mainFuture.onComplete { _ in
                 XCTAssert(executingCallbacksMain == 0, "This should be the only executing callback")
                 
                 executingCallbacksMain += 1
