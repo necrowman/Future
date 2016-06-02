@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		653291691D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
+		6532916A1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
+		6532916B1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
+		6532916C1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
 		65AE34251C988C4200AC1DBA /* ContextSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AE34241C988C4200AC1DBA /* ContextSelector.swift */; };
 		65F0F6DD1C94A0F500E1E59B /* Future.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F0F6D21C94A0F400E1E59B /* Future.framework */; };
 		65F0F6E21C94A0F500E1E59B /* FutureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F6E11C94A0F500E1E59B /* FutureTests.swift */; };
@@ -202,6 +206,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Future+InvalidationToken.swift"; sourceTree = "<group>"; };
 		65AE34241C988C4200AC1DBA /* ContextSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextSelector.swift; sourceTree = "<group>"; };
 		65F0F6D21C94A0F400E1E59B /* Future.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Future.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65F0F6D71C94A0F400E1E59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -383,6 +388,7 @@
 				65F0F6D71C94A0F400E1E59B /* Info.plist */,
 				65F0F6EC1C94A15900E1E59B /* Future.swift */,
 				65F0F71C1C987CE600E1E59B /* Future+Functional.swift */,
+				653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */,
 				65F0F7141C98767C00E1E59B /* MutableFuture.swift */,
 				65F0F7121C98766B00E1E59B /* Promise.swift */,
 				65F0F7161C98769300E1E59B /* TaskChain.swift */,
@@ -751,6 +757,7 @@
 			files = (
 				65F0F71B1C98776E00E1E59B /* Result+.swift in Sources */,
 				65AE34251C988C4200AC1DBA /* ContextSelector.swift in Sources */,
+				653291691D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */,
 				65F0F71D1C987CE600E1E59B /* Future+Functional.swift in Sources */,
 				65F0F7171C98769300E1E59B /* TaskChain.swift in Sources */,
 				65F0F6ED1C94A15900E1E59B /* Future.swift in Sources */,
@@ -777,6 +784,7 @@
 			files = (
 				92F8AE7D1CDB590000938F50 /* Future.swift in Sources */,
 				92F8AE7E1CDB590000938F50 /* Future+Functional.swift in Sources */,
+				6532916A1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */,
 				92F8AE841CDB590000938F50 /* Result+.swift in Sources */,
 				92F8AE811CDB590000938F50 /* TaskChain.swift in Sources */,
 				92F8AE7F1CDB590000938F50 /* MutableFuture.swift in Sources */,
@@ -803,6 +811,7 @@
 			files = (
 				92F8AEB61CDB5A1E00938F50 /* Future.swift in Sources */,
 				92F8AEB71CDB5A1E00938F50 /* Future+Functional.swift in Sources */,
+				6532916B1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */,
 				92F8AEBD1CDB5A1E00938F50 /* Result+.swift in Sources */,
 				92F8AEBA1CDB5A1E00938F50 /* TaskChain.swift in Sources */,
 				92F8AEB81CDB5A1E00938F50 /* MutableFuture.swift in Sources */,
@@ -829,6 +838,7 @@
 			files = (
 				92F8AEE71CDB5B9700938F50 /* Future.swift in Sources */,
 				92F8AEE81CDB5B9700938F50 /* Future+Functional.swift in Sources */,
+				6532916C1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */,
 				92F8AEEE1CDB5B9700938F50 /* Result+.swift in Sources */,
 				92F8AEEB1CDB5B9700938F50 /* TaskChain.swift in Sources */,
 				92F8AEE91CDB5B9700938F50 /* MutableFuture.swift in Sources */,

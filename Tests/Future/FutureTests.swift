@@ -1068,6 +1068,28 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(withTimeout: 0)
     }
     
+    func testInvalidationToken() {
+        let token = InvalidationToken()
+
+        let exp1 = self.expectationWithDescription("exp1")
+        let exp2 = self.expectationWithDescription("exp2")
+        let exp3 = self.expectationWithDescription("exp3")
+        
+        Future<Void>(value: ()).onSuccess(token) {
+            token.valid = false
+            exp1.fulfill()
+        }.onSuccess(token) {
+            XCTFail("should not get called")
+        }.onSuccess {
+            exp2.fulfill()
+            token.valid = true
+        }.onSuccess(token) {
+            exp3.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 0)
+    }
+    
 //    func testRelease() {
 //        weak var f: Future<Int>? = nil
 //        
