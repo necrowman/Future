@@ -743,41 +743,50 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(withTimeout: 2, handler: nil)
     }
     
-//    func testFilterNoSuchElement() {
-//        let e = self.expectation()
-//        Future<Int>(value: 3).filter { $0 > 5}.onComplete { result in
-//            if let err = result.error {
-//                XCTAssert(err == BrightFuturesError<NoError>.NoSuchElement, "filter should yield no result")
-//            }
-//            e.fulfill()
-//        }
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
-//    
-//    func testFilterPasses() {
-//        let e = self.expectation()
-//        Future<String>(value: "Thomas").filter { $0.hasPrefix("Th") }.onComplete { result in
-//            if let val = result.value {
-//                XCTAssert(val == "Thomas", "Filter should pass")
-//            }
-//            
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
-//    
-//    func testFilterFailedFuture() {
-//        let f = Future<Int>(error: TestError.Recoverable)
-//        
-//        let e = self.expectation()
-//        f.filter { _ in false }.onFailure { (error:TestError) in
-//            XCTAssert(error == TestError.Recoverable)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectations(withTimeout: 2, handler: nil)
-//    }
+    func testFilterNoSuchElement() {
+        let e = self.expectation()
+        
+        Future<Int>(value: 3).filter { $0 > 5}.onComplete { (result:Result<Int, Error>) in
+            XCTAssertEqual(result.error!, Error.FilteredOut, "filter should yield no result")
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+    func testFilterPasses() {
+        let e = self.expectation()
+        Future<String>(value: "Daniel").filter { $0.hasPrefix("Da") }.onComplete { result in
+            XCTAssertEqual(result.value!, "Daniel", "Filter should pass")
+            
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+    func testFilterNotPasses() {
+        let e = self.expectation()
+        Future<String>(value: "Daniel").filterNot { $0.hasPrefix("Cr") }.onComplete { result in
+            XCTAssertEqual(result.value!, "Daniel", "Filter should pass")
+            
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
+    
+    func testFilterFailedFuture() {
+        let f = Future<Int>(error: TestError.Recoverable)
+        
+        let e = self.expectation()
+        f.filter { _ in false }.onFailure { (error:TestError) in
+            XCTAssert(error == TestError.Recoverable)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(withTimeout: 2, handler: nil)
+    }
     
 //    func testReadyFuture() {
 //        var x = 10

@@ -21,6 +21,7 @@ import Boilerplate
 public enum Error : ErrorProtocol {
     case AlreadyCompleted
     case MappedNil
+    case FilteredOut
 }
 
 internal func anyError(e:ErrorProtocol) -> AnyError {

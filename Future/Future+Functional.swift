@@ -116,6 +116,30 @@ public extension FutureType {
         return future
     }
     
+    public func filter(f: (Value)->Bool) -> Future<Value> {
+        let future = MutableFuture<Value>(context: self.context)
+        
+        self.onComplete { (result:Result<Value, AnyError>) in
+            result.analysis(ifSuccess: { value in
+                if f(value) {
+                    try! future.success(value)
+                } else {
+                    try! future.fail(Error.FilteredOut)
+                }
+                }, ifFailure: { error in
+                    try! future.fail(error)
+            })
+        }
+        
+        return future
+    }
+    
+    public func filterNot(f: (Value)->Bool) -> Future<Value> {
+        return self.filter { value in
+            return !f(value)
+        }
+    }
+    
     public func recover<E : ErrorProtocol>(f:(E) throws ->Value) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
