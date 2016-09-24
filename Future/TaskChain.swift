@@ -22,7 +22,7 @@ import ExecutionContext
 internal let admin = ExecutionContext(kind: .serial)
 
 internal class TaskChain {
-    typealias ContextTask = (ExecutionContextType)->Void
+    typealias ContextTask = (ExecutionContextProtocol)->Void
     private let head:ContextTask
     
     private var nextTail:MutableAnyContainer<ContextTask?>
@@ -35,7 +35,7 @@ internal class TaskChain {
         nextTail = tail
     }
     
-    func perform(context:ExecutionContextType) {
+    func perform(in context:ExecutionContextProtocol) {
         admin.execute {
             context.execute {
                 self.head(context)
@@ -44,7 +44,7 @@ internal class TaskChain {
     }
     
     /// you have to handle calling next yourself
-    func append(f:(AnyContainer<ContextTask?>)->ContextTask) {
+    func append(_ f:(AnyContainer<ContextTask?>)->ContextTask) {
         let tail = MutableAnyContainer<ContextTask?>(nil)
         let task = f(tail)
         admin.execute {

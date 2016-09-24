@@ -21,13 +21,13 @@ import Boilerplate
 import ExecutionContext
 
 public extension Future {
-    public func onComplete(callback: Result<Value, AnyError> -> Void) -> Self {
-        return self.onCompleteInternal(callback)
+    public func onComplete(_ callback: @escaping (Result<Value, AnyError>) -> Void) -> Self {
+        return self.onCompleteInternal(callback: callback)
     }
 }
 
-public extension FutureType {
-    public func onSuccess(f: Value -> Void) -> Self {
+public extension FutureProtocol {
+    public func onSuccess(_ f: @escaping (Value) -> Void) -> Self {
         return self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 f(value)
@@ -35,7 +35,7 @@ public extension FutureType {
         }
     }
     
-    public func onFailure<E : ErrorProtocol>(f: E -> Void) -> Self{
+    public func onFailure<E : Error>(_ f: @escaping (E) -> Void) -> Self{
         return self.onComplete { (result:Result<Value, E>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error)
@@ -43,7 +43,7 @@ public extension FutureType {
         }
     }
     
-    public func onFailure(f: ErrorProtocol -> Void) -> Self {
+    public func onFailure(_ f:@escaping (Error) -> Void) -> Self {
         return self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: {_ in}, ifFailure: {error in
                 f(error.error)
@@ -52,187 +52,189 @@ public extension FutureType {
     }
 }
 
-public extension FutureType {
-    public func map<B>(f:(Value) throws -> B) -> Future<B> {
+public extension FutureProtocol {
+    public func map<B>(_ f:@escaping (Value) throws -> B) -> Future<B> {
         let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
-            let result = result.flatMap { value in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
+            let result = result.flatMap { value -> Result<B, AnyError> in
                 materializeAny {
                     try f(value)
                 }
             }
-            try! future.complete(result)
+            try! future.complete(result: result)
         }
         
         return future
     }
     
-    public func flatMap<B, F : FutureType where F.Value == B>(f:(Value) -> F) -> Future<B> {
+    public func flatMap<B, F : FutureProtocol>(_ f:@escaping (Value) -> F) -> Future<B> where F.Value == B {
         let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 let b = f(value)
-                b.onComplete { (result:Result<B, AnyError>) in
-                    try! future.complete(result)
+                let _ = b.onComplete { (result:Result<B, AnyError>) in
+                    try! future.complete(result: result)
                 }
             }, ifFailure: { error in
-                try! future.fail(error)
+                try! future.fail(error: error)
             })
         }
         
         return future
     }
     
-    public func flatMap<B, E : ErrorProtocol>(f:(Value) -> Result<B, E>) -> Future<B> {
+    public func flatMap<B, E : Error>(_ f:@escaping (Value) -> Result<B, E>) -> Future<B> {
         let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 let b = f(value)
-                try! future.complete(b)
+                try! future.complete(result: b)
             }, ifFailure: { error in
-                try! future.fail(error)
+                try! future.fail(error: error)
             })
         }
         
         return future
     }
     
-    public func flatMap<B>(f:(Value) -> B?) -> Future<B> {
+    public func flatMap<B>(_ f:@escaping (Value) -> B?) -> Future<B> {
         let future = MutableFuture<B>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             let result:Result<B, AnyError> = result.flatMap { value in
                 guard let b = f(value) else {
-                    return Result(error: AnyError(Error.MappedNil))
+                    return Result(error: AnyError(FutureError.MappedNil))
                 }
                 return Result(value: b)
             }
-            try! future.complete(result)
+            try! future.complete(result: result)
         }
         
         return future
     }
     
-    public func filter(f: (Value)->Bool) -> Future<Value> {
+    public func filter(_ f: @escaping (Value)->Bool) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             result.analysis(ifSuccess: { value in
                 if f(value) {
-                    try! future.success(value)
+                    try! future.success(value: value)
                 } else {
-                    try! future.fail(Error.FilteredOut)
+                    try! future.fail(error: FutureError.FilteredOut)
                 }
                 }, ifFailure: { error in
-                    try! future.fail(error)
+                    try! future.fail(error: error)
             })
         }
         
         return future
     }
     
-    public func filterNot(f: (Value)->Bool) -> Future<Value> {
+    public func filterNot(_ f:@escaping (Value)->Bool) -> Future<Value> {
         return self.filter { value in
             return !f(value)
         }
     }
     
-    public func recover<E : ErrorProtocol>(f:(E) throws ->Value) -> Future<Value> {
+    public func recover<E : Error>(_ f:@escaping (E) throws ->Value) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete { (result:Result<Value, E>) in
+        let _ = self.onComplete { (result:Result<Value, E>) in
             let result = result.flatMapError { error in
                 return materializeAny {
                     try f(error)
                 }
             }
-            future.tryComplete(result)
+            //yes, we want to supress double completion here
+            let _ = future.tryComplete(result: result)
         }
         
         // if first one didn't match this one will be called next
-        future.completeWith(self)
+        future.completeWith(future: self)
         
         return future
     }
     
-    public func recover(f:(ErrorProtocol) throws ->Value) -> Future<Value> {
+    public func recover(_ f:@escaping (Error) throws ->Value) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             let result = result.flatMapError { error in
                 return materializeAny {
                     try f(error.error)
                 }
             }
-            future.tryComplete(result)
+            //yes, we want to supress double completion here
+            let _ = future.tryComplete(result: result)
         }
         
         // if first one didn't match this one will be called next
-        future.completeWith(self)
+        future.completeWith(future: self)
         
         return future
     }
     
-    public func recoverWith<E : ErrorProtocol>(f:(E) -> Future<Value>) -> Future<Value> {
+    public func recoverWith<E : Error>(_ f:@escaping (E) -> Future<Value>) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             guard let mapped:Result<Value, E> = result.tryAsError() else {
-                try! future.complete(result)
+                try! future.complete(result: result)
                 return
             }
             
-            mapped.analysis(ifSuccess: { _ in
-                try! future.complete(result)
+            mapped.analysis(ifSuccess: { _ -> Void in
+                try! future.complete(result: result)
             }, ifFailure: { e in
-                future.completeWith(f(e))
+                future.completeWith(future: f(e))
             })
         }
         
         return future
     }
     
-    public func recoverWith(f:(ErrorProtocol) -> Future<Value>) -> Future<Value> {
+    public func recoverWith(_ f:@escaping (Error) -> Future<Value>) -> Future<Value> {
         let future = MutableFuture<Value>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             guard let mapped:Result<Value, AnyError> = result.tryAsError() else {
-                try! future.complete(result)
+                try! future.complete(result: result)
                 return
             }
             
-            mapped.analysis(ifSuccess: { _ in
-                try! future.complete(result)
+            mapped.analysis(ifSuccess: { _ -> Void in
+                try! future.complete(result: result)
             }, ifFailure: { e in
-                future.completeWith(f(e.error))
+                future.completeWith(future: f(e.error))
             })
         }
         
         return future
     }
     
-    public func zip<B, F : FutureType where F.Value == B>(f:F) -> Future<(Value, B)> {
+    public func zip<B, F : FutureProtocol>(_ f:F) -> Future<(Value, B)> where F.Value == B {
         let future = MutableFuture<(Value, B)>(context: self.context)
         
-        self.onComplete { (result:Result<Value, AnyError>) in
+        let _ = self.onComplete { (result:Result<Value, AnyError>) in
             let context = ExecutionContext.current
             
             result.analysis(ifSuccess: { first -> Void in
-                f.onComplete { (result:Result<B, AnyError>) in
+                let _ = f.onComplete { (result:Result<B, AnyError>) in
                     context.execute {
                         result.analysis(ifSuccess: { second in
-                            try! future.success((first, second))
+                            try! future.success(value: (first, second))
                         }, ifFailure: { e in
-                            try! future.fail(e.error)
+                            try! future.fail(error: e.error)
                         })
                     }
                 }
                 
             }, ifFailure: { e in
-                try! future.fail(e.error)
+                try! future.fail(error: e.error)
             })
         }
         

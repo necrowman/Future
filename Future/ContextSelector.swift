@@ -20,7 +20,7 @@ import Boilerplate
 import ExecutionContext
 
 /// bool is if it is a continuation or initial 'future' call
-public typealias ContextSelector = ()->ExecutionContextType
+public typealias ContextSelector = ()->ExecutionContextProtocol
 
 /// default context selector implementation. Works for most scenarios. Don't change it if you are not 100% sure what you do
 public var contextSelector:ContextSelector = {

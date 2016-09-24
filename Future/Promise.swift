@@ -34,7 +34,7 @@ public class Promise<V> : MutableFutureType {
         _future = MutableFuture(context: immediate)
     }
     
-    public func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
-        return _future.tryComplete(result)
+    public func tryComplete<E : Error>(result:Result<Value, E>) -> Bool {
+        return _future.tryComplete(result: result)
     }
 }

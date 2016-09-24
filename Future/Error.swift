@@ -18,13 +18,13 @@ import Foundation
 
 import Boilerplate
 
-public enum Error : ErrorProtocol {
+public enum FutureError : Error {
     case AlreadyCompleted
     case MappedNil
     case FilteredOut
 }
 
-internal func anyError(e:ErrorProtocol) -> AnyError {
+internal func anyError(_ e:Error) -> AnyError {
     switch e {
     case let error as AnyError:
         return error
