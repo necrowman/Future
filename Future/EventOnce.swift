@@ -26,12 +26,14 @@ public extension EventEmitter {
         let future = MutableFuture<E.Payload>(context: immediate)
         
         let offEvent = self.on(event).react { payload in
-            try! future.success(value: payload)
+            //yes, suppress the result as event may fire more than once
+            let _ = future.trySuccess(value: payload)
         }
         
         let offError = self.on(.error).react { e in
             if failOnError(e) {
-                try! future.fail(error: e)
+                //yes, suppress the result as event may fire more than once
+                let _ = future.tryFail(error: e)
             }
         }
         
