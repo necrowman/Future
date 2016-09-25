@@ -57,7 +57,7 @@ class EventTests: XCTestCase {
     
     let mQueue = ExecutionContext(kind: .serial)
     
-    /*func testOnceSuccess() {
+    func testOnceSuccess() {
         
         let expectation = self.expectation(description: "success")
         
@@ -85,9 +85,9 @@ class EventTests: XCTestCase {
         }
         
         self.waitForExpectations(timeout: 1)
-    }*/
+    }
     
-    /*func testOnceFailed() {
+    func testOnceFailed() {
         let expectation = self.expectation(description: "success")
         
         mQueue.sync {
@@ -120,7 +120,7 @@ class EventTests: XCTestCase {
         }
         
         self.waitForExpectations(timeout: 1)
-    }*/
+    }
 }
 
 #if os(Linux)
