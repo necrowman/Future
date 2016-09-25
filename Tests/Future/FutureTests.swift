@@ -518,6 +518,7 @@ class FutureTests: XCTestCase {
                 e.fulfill()
                 return
             }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -544,6 +545,7 @@ class FutureTests: XCTestCase {
                 XCTAssert(numberIsLarge)
                 e.fulfill()
             }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -564,6 +566,7 @@ class FutureTests: XCTestCase {
                 XCTAssertEqual(error, TestError.Recoverable)
                 e.fulfill()
             }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -590,6 +593,7 @@ class FutureTests: XCTestCase {
 //              XCTAssert(value == 5)
 //              e1.fulfill()
 //          }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -621,6 +625,7 @@ class FutureTests: XCTestCase {
 //              XCTAssert(value == 3)
 //              e1.fulfill()
 //          }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -649,6 +654,7 @@ class FutureTests: XCTestCase {
 //              XCTAssertEqual($0, 5)
 //              e1.fulfill()
 //          }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -664,6 +670,7 @@ class FutureTests: XCTestCase {
                 XCTAssertEqual(error, TestError.Fatal)
                 e.fulfill()
             }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
@@ -858,6 +865,7 @@ class FutureTests: XCTestCase {
                 XCTAssertEqual(val, 22)
                 e.fulfill()
             }
+            return
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
