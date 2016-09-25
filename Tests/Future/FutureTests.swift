@@ -457,17 +457,17 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(timeout: 2, handler: nil)
     }
 
-//    func testPromoteErrorNoSuchElement() {
-//        let f: Future<Int, BrightFuturesError<TestError>> = future(3).filter { _ in false }.promoteError()
-//        
-//        let e = self.expectation()
-//        f.onFailure { err in
-//            XCTAssert(err == BrightFuturesError<TestError>.NoSuchElement)
-//            e.fulfill()
-//        }
-//        
-//        self.waitForExpectationsWithTimeout(2, handler: nil)
-//    }
+    func testFilteredOutError() {
+        let f: Future<Int> = future{3}.filter { _ in false }
+        
+        let e = self.expectation()
+        f.onFailure { (err:FutureError) in
+            XCTAssertEqual(err, FutureError.FilteredOut)
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(timeout: 2, handler: nil)
+    }
 
     // MARK: Functional Composition
     
