@@ -979,26 +979,25 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(timeout: 5, handler: nil)
     }
     
-    /*#if !os(Linux) || dispatch
+    #if !os(Linux) || dispatch
     // Test for https://github.com/Thomvis/BrightFutures/issues/18
     func testCompletionBlockOnMainQueue() {
-        var key = "mainqueuespecifickey" as NSString
-        let value = "value" as NSString
-        let valuePointer = getMutablePointer(object: value)
+        let key = DispatchSpecificKey<String>()
+        let value = "value"
         
+        DispatchQueue.main.setSpecific(key: key, value: value)
         
-        DispatchQueue.main.setSpecific(&key, valuePointer, nil)
-        XCTAssertEqual(dispatch_get_specific(&key), valuePointer, "value should have been set on the main (i.e. current) queue")
+        XCTAssertEqual(DispatchQueue.main.getSpecific(key: key), value, "value should have been set on the main (i.e. current) queue")
         
         let e = self.expectation()
         Future<Int>(value: 1).settle(in: main).onSuccess { val in
-            XCTAssertEqual(DispatchQueue.getSpecific(key: &key), valuePointer, "we should now too be on the main queue")
+            XCTAssertEqual(DispatchQueue.getSpecific(key: key), value, "we should now too be on the main queue")
             e.fulfill()
         }
         
         self.waitForExpectations(timeout: 2, handler: nil)
     }
-    #endif*/
+    #endif
     
     class DeinitMockObject {
         let _expectation:XCTestExpectation
