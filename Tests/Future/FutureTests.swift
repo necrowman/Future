@@ -1164,7 +1164,7 @@ extension FutureTests {
 			("testFlatMapResult", testFlatMapResult),
 //			("testStress", testStress),
 			("testSerialCallbacks", testSerialCallbacks),
-//			("testRelease", testRelease),
+			("testRelease", testRelease),
 		]
 	}
 }
