@@ -874,13 +874,13 @@ class FutureTests: XCTestCase {
     // MARK: Advanced Tests
 
     // Creates a lot of futures and adds completion blocks concurrently, which should all fire
-    /*func testStress() {
+    func testStress() {
             let instances = 100;
             var successfulFutures = [Future<Int>]()
             var failingFutures = [Future<Int>]()
-            let contexts: [ExecutionContextType] = [immediate, main, global]
+            let contexts: [ExecutionContextProtocol] = [immediate, main, global]
             
-            let randomContext: () -> ExecutionContextType = { contexts[Int(arc4random_uniform(UInt32(contexts.count)))] }
+            let randomContext: () -> ExecutionContextProtocol = { contexts[Int(arc4random_uniform(UInt32(contexts.count)))] }
             let randomFuture: () -> Future<Int> = {
                 if arc4random() % 2 == 0 {
                     return successfulFutures[Int(arc4random_uniform(UInt32(successfulFutures.count)))]
@@ -896,7 +896,7 @@ class FutureTests: XCTestCase {
                 if arc4random() % 2 == 0 {
                     let futureResult: Int = Int(arc4random_uniform(10))
                     finalSum += futureResult
-                    future = self.succeedingFuture(futureResult)
+                    future = self.succeedingFuture(val: futureResult)
                     successfulFutures.append(future)
                 } else {
                     future = self.failingFuture()
@@ -904,7 +904,7 @@ class FutureTests: XCTestCase {
                 }
                 
                 let context = randomContext()
-                let e = self.expectation(withDescription: "future completes in context \(context)")
+                let e = self.expectation(description: "future completes in context \(context)")
                 
                 future.settle(in: context).onComplete { (res:Result<Int, AnyError>) in
                     e.fulfill()
@@ -917,7 +917,7 @@ class FutureTests: XCTestCase {
                 let f = randomFuture()
                 
                 let context = randomContext()
-                let e = self.expectation(withDescription: "future completes in context \(context)")
+                let e = self.expectation(description: "future completes in context \(context)")
                 
                 global.execute {
                     usleep(arc4random_uniform(100))
@@ -928,8 +928,8 @@ class FutureTests: XCTestCase {
                 }
             }
             
-            self.waitForExpectations(withTimeout: 10, handler: nil)
-    }*/
+            self.waitForExpectations(timeout: 10, handler: nil)
+    }
     
     func testSerialCallbacks() {
         let p = Promise<Void>()
@@ -1161,7 +1161,7 @@ extension FutureTests {
 			("testFlatMap", testFlatMap),
 //			("testFlatMapByPassingFunction", testFlatMapByPassingFunction),
 			("testFlatMapResult", testFlatMapResult),
-//			("testStress", testStress),
+			("testStress", testStress),
 			("testSerialCallbacks", testSerialCallbacks),
 			("testRelease", testRelease),
 		]
