@@ -68,14 +68,14 @@ class EventTests: XCTestCase {
             
             var counter = 0
             
-            let _ = future.onSuccess { s in
+            future.onSuccess { s in
                 XCTAssertEqual(counter, 0)
                 counter += 1
                 XCTAssertEqual(s, self.reference)
                 expectation.fulfill()
             }
             
-            let _ = future.onFailure { _ in
+            future.onFailure { _ in
                 XCTFail("should not reach here")
             }
             
@@ -100,11 +100,11 @@ class EventTests: XCTestCase {
             
             var counter = 0
             
-            let _ = future.onSuccess { s in
+            future.onSuccess { s in
                 XCTFail("should not reach here")
             }
             
-            let _ = future.onFailure { e in
+            future.onFailure { e in
                 XCTAssertEqual(counter, 0)
                 counter += 1
                 

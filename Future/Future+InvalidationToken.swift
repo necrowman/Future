@@ -18,24 +18,29 @@ import Result
 import Boilerplate
 
 public extension Future {
+    @discardableResult
     public func onComplete(token:InvalidationToken, _ callback: @escaping (Result<Value, AnyError>) -> Void) -> Self {
         return self.onComplete(token.closure(callback))
     }
 }
 
 public extension FutureProtocol {
+    @discardableResult
     public func onComplete<E: Error>(token:InvalidationToken, _ callback: @escaping (Result<Value, E>) -> Void) -> Self {
         return self.onComplete(token.closure(callback))
     }
     
+    @discardableResult
     public func onSuccess(token:InvalidationToken, _ f:@escaping (Value) -> Void) -> Self {
         return self.onSuccess(token.closure(f))
     }
     
+    @discardableResult
     public func onFailure<E : Error>(token:InvalidationToken, _ f:@escaping (E) -> Void) -> Self{
         return self.onFailure(token.closure(f))
     }
     
+    @discardableResult
     public func onFailure(token:InvalidationToken, _ f:@escaping (Error) -> Void) -> Self {
         return self.onFailure(token.closure(f))
     }

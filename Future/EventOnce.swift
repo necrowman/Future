@@ -35,7 +35,7 @@ public extension EventEmitter {
             }
         }
         
-        let _ = future.onComplete { (_:Result<E.Payload,AnyError>) in
+        future.onComplete { (_:Result<E.Payload,AnyError>) in
             offEvent()
             offError()
         }

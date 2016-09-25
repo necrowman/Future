@@ -27,6 +27,7 @@ public protocol FutureProtocol : ExecutionContextTenantProtocol {
     init(error:Error)
     init<E : Error>(result:Result<Value, E>)
     
+    @discardableResult
     func onComplete<E: Error>(_ callback: @escaping (Result<Value, E>) -> Void) -> Self
     
     var isCompleted:Bool {get}
@@ -91,6 +92,7 @@ public class Future<V> : FutureProtocol {
         return self.context.isEqual(to: immediate) ? ExecutionContext.current : self.context
     }
     
+    @discardableResult
     public func onComplete<E: Error>(_ callback: @escaping (Result<Value, E>) -> Void) -> Self {
         return self.onCompleteInternal(callback: callback)
     }
