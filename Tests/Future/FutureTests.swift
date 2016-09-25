@@ -1096,22 +1096,30 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(timeout: 1)
     }
     
-//    func testRelease() {
-//        weak var f: Future<Int>? = nil
-//        
-//        var f1: Future<Int>? = Future<Int>(value: 1).map { $0 }.recover { _ in
-//            return 0
-//        }.onSuccess { _ in
-//        }.onComplete { _ in
-//        }
-//        
-//        f = f1
-//        XCTAssertNotNil(f1);
-//        XCTAssertNotNil(f);
-//        f1 = nil
-//        XCTAssertNil(f1)
-//        XCTAssertNil(f)
-//    }
+    func testRelease() {
+        weak var f: Future<Int>? = nil
+        
+        let expectationSuccess = self.expectation(description: "Success")
+        let expectationComplete = self.expectation(description: "Complete")
+        
+        var f1: Future<Int>? = Future<Int>(value: 1).map { $0 }.recover { _ in
+            return 0
+        }.onSuccess { _ in
+            expectationSuccess.fulfill()
+        }.onComplete { _ in
+            expectationComplete.fulfill()
+        }
+        
+        f = f1
+        XCTAssertNotNil(f1);
+        XCTAssertNotNil(f);
+        f1 = nil
+        
+        self.waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertNil(f1)
+        XCTAssertNil(f)
+    }
 
 }
 
