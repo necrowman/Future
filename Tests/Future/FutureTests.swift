@@ -1071,7 +1071,7 @@ class FutureTests: XCTestCase {
             }
         } while false
         
-        self.waitForExpectations(timeout: 0)
+        self.waitForExpectations(timeout: 1)
     }
     
     func testInvalidationToken() {
@@ -1093,7 +1093,7 @@ class FutureTests: XCTestCase {
             exp3.fulfill()
         }
         
-        self.waitForExpectations(timeout: 0)
+        self.waitForExpectations(timeout: 1)
     }
     
 //    func testRelease() {
