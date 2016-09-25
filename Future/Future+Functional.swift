@@ -154,7 +154,7 @@ public extension FutureProtocol {
                 }
             }
             //yes, we want to supress double completion here
-            future.tryComplete(result: result)
+            let _ = future.tryComplete(result: result)
         }
         
         // if first one didn't match this one will be called next
@@ -173,7 +173,7 @@ public extension FutureProtocol {
                 }
             }
             //yes, we want to supress double completion here
-            future.tryComplete(result: result)
+            let _ = future.tryComplete(result: result)
         }
         
         // if first one didn't match this one will be called next

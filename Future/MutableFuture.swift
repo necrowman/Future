@@ -72,8 +72,8 @@ public extension MutableFutureType {
     /// safe to be called several times
     func completeWith<F: FutureProtocol>(future:F) where F.Value == Value {
         future.onComplete { (result:Result<Value, AnyError>) in
-            //yes, suppress
-            self.tryComplete(result: result)
+            //yes, suppress (we might have multiple complete with statements)
+            let _ = self.tryComplete(result: result)
         }
     }
 }
