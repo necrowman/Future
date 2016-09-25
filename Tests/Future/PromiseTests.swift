@@ -40,7 +40,7 @@ class PromiseTests: XCTestCase {
         let p = Promise<Int>()
         
         global.async {
-            p.tryFail(error: TestError.Recoverable)
+            XCTAssert(p.tryFail(error: TestError.Recoverable))
         }
         
         let e = self.expectation(description: "complete expectation")
@@ -68,7 +68,7 @@ class PromiseTests: XCTestCase {
     
     func testPromiseCompleteWithSuccess() {
         let p = Promise<Int>()
-        p.tryComplete(result: Result<Int, TestError>(value: 2))
+        XCTAssert(p.tryComplete(result: Result<Int, TestError>(value: 2)))
         
         XCTAssert(p.future.isCompleted)
         //XCTAssert(p.future.result() == Result<Int, TestError>(value:2))
@@ -76,7 +76,7 @@ class PromiseTests: XCTestCase {
     
     func testPromiseCompleteWithFailure() {
         let p = Promise<Int>()
-        p.tryComplete(result: Result(error: TestError.Recoverable))
+        XCTAssert(p.tryComplete(result: Result(error: TestError.Recoverable)))
         
         XCTAssert(p.future.isCompleted)
         //XCTAssert(p.future.result() == Result<Int, TestError>(error:TestError.Recoverable))

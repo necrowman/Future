@@ -970,7 +970,7 @@ class FutureTests: XCTestCase {
             }
         }
         
-        p.trySuccess(value: ())
+        XCTAssert(p.trySuccess(value: ()))
         
         #if os(Linux)
             (RunLoop.current as? RunnableRunLoopType)?.run(5)
@@ -1038,7 +1038,7 @@ class FutureTests: XCTestCase {
                 finish.fulfill()
             }
             global.execute {
-                p.trySuccess(value: DeinitMockObject(expectation))
+                XCTAssert(p.trySuccess(value: DeinitMockObject(expectation)))
             }
         } while false
         
@@ -1054,7 +1054,7 @@ class FutureTests: XCTestCase {
             p.future.onSuccess { _ in
                 finish.fulfill()
             }
-            p.trySuccess(value: DeinitMockObject(expectation))
+            XCTAssert(p.trySuccess(value: DeinitMockObject(expectation)))
         } while false
         
         self.waitForExpectations(timeout: 1)
