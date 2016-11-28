@@ -149,7 +149,8 @@ class FutureTests: XCTestCase {
         self.waitForExpectations(timeout:2, handler: nil)
     }
     
-    #if !os(Linux) // Swift on linux has crashes with NSError
+    // Swift on linux has crashes with NSError
+    #if !os(Linux)
     func testNSError() {
         let completeExpectation = self.expectation(description: "immediate complete")
         let failureExpectation = self.expectation(description: "immediate failure")
@@ -1124,7 +1125,7 @@ class FutureTests: XCTestCase {
 
 #if os(Linux)
 extension FutureTests {
-	static var allTests : [(String, FutureTests -> () throws -> Void)] {
+	static var allTests : [(String, (FutureTests) -> () throws -> Void)] {
 		return [
 			("testCompletedFuture", testCompletedFuture),
 			("testCompletedVoidFuture", testCompletedVoidFuture),
@@ -1132,14 +1133,14 @@ extension FutureTests {
 			("testFutureBasic", testFutureBasic),
 			("testControlFlowSyntax", testControlFlowSyntax),
 			("testControlFlowSyntaxWithError", testControlFlowSyntaxWithError),
-//			("testAutoClosure", testAutoClosure),
-//			("testAutoClosureWithResult", testAutoClosureWithResult),
+			("testAutoClosure", testAutoClosure),
+			("testAutoClosureWithResult", testAutoClosureWithResult),
 			("testCustomExecutionContext", testCustomExecutionContext),
 			("testMainExecutionContext", testMainExecutionContext),
 			("testDefaultCallbackExecutionContextFromMain", testDefaultCallbackExecutionContextFromMain),
 			("testDefaultCallbackExecutionContextFromBackground", testDefaultCallbackExecutionContextFromBackground),
-//			("testPromoteErrorNoSuchElement", testPromoteErrorNoSuchElement),
-//			("testAndThen", testAndThen),
+			("testFilteredOutError", testFilteredOutError),
+			("testAndThen", testAndThen),
 			("testSimpleMap", testSimpleMap),
 			("testMapSuccess", testMapSuccess),
 			("testMapFailure", testMapFailure),
@@ -1153,16 +1154,21 @@ extension FutureTests {
 			("testZipBothFail", testZipBothFail),
 			("testFilterNoSuchElement", testFilterNoSuchElement),
 			("testFilterPasses", testFilterPasses),
-            ("testFilterNotPasses", testFilterNotPasses),
+			("testFilterNotPasses", testFilterNotPasses),
 			("testFilterFailedFuture", testFilterFailedFuture),
-//			("testReadyFuture", testReadyFuture),
-//			("testReadyFutureWithTimeout", testReadyFutureWithTimeout),
-//			("testReadyCompletedFuture", testReadyCompletedFuture),
+			("testReadyFuture", testReadyFuture),
+			("testReadyFutureWithTimeout", testReadyFutureWithTimeout),
+			("testReadyCompletedFuture", testReadyCompletedFuture),
 			("testFlatMap", testFlatMap),
-//			("testFlatMapByPassingFunction", testFlatMapByPassingFunction),
+			("testFlatMapByPassingFunction", testFlatMapByPassingFunction),
 			("testFlatMapResult", testFlatMapResult),
 			("testStress", testStress),
 			("testSerialCallbacks", testSerialCallbacks),
+			("testFutureFunReleasesObject", testFutureFunReleasesObject),
+			("testPromiseInContextReleasesObject", testPromiseInContextReleasesObject),
+			("testPromiseReleasesObject", testPromiseReleasesObject),
+			("testFutureReleasesObject", testFutureReleasesObject),
+			("testInvalidationToken", testInvalidationToken),
 			("testRelease", testRelease),
 		]
 	}
