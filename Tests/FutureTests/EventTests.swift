@@ -39,7 +39,7 @@ class EventEmitterTest : EventEmitter {
     let dispatcher:EventDispatcher = EventDispatcher()
     let context: ExecutionContextProtocol = ExecutionContext.current
     
-    func on<E : Event>(_ groupedEvent: TestEventGroup<E>) -> EventConveyor<E.Payload> {
+    func on<E : Event>(_ groupedEvent: TestEventGroup<E>) -> SignalStream<E.Payload> {
         return self.on(groupedEvent.event)
     }
     
@@ -125,7 +125,7 @@ class EventTests: XCTestCase {
 
 #if os(Linux)
 extension EventTests {
-	static var allTests : [(String, EventTests -> () throws -> Void)] {
+	static var allTests : [(String, (EventTests) -> () throws -> Void)] {
 		return [
 			("testOnceSuccess", testOnceSuccess),
 			("testOnceFailed", testOnceFailed),

@@ -121,15 +121,15 @@ class PromiseTests: XCTestCase {
 
 #if os(Linux)
 extension PromiseTests {
-	static var allTests : [(String, PromiseTests -> () throws -> Void)] {
+	static var allTests : [(String, (PromiseTests) -> () throws -> Void)] {
 		return [
 			("testSuccessPromise", testSuccessPromise),
 			("testFailurePromise", testFailurePromise),
-//			("testCompletePromise", testCompletePromise),
+			("testCompletePromise", testCompletePromise),
 			("testPromiseCompleteWithSuccess", testPromiseCompleteWithSuccess),
 			("testPromiseCompleteWithFailure", testPromiseCompleteWithFailure),
-//			("testPromiseTrySuccessTwice", testPromiseTrySuccessTwice),
-//			("testPromiseTryFailureTwice", testPromiseTryFailureTwice),
+			("testPromiseTrySuccessTwice", testPromiseTrySuccessTwice),
+			("testPromiseTryFailureTwice", testPromiseTryFailureTwice),
 			("testPromiseCompleteWithSucceedingFuture", testPromiseCompleteWithSucceedingFuture),
 			("testPromiseCompleteWithFailingFuture", testPromiseCompleteWithFailingFuture),
 		]

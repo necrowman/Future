@@ -18,10 +18,7 @@ import PackageDescription
 
 let package = Package(
     name: "Future",
-    targets: [Target(name: "Future")],
     dependencies: [
-        .Package(url: "https://github.com/crossroadlabs/XCTest3.git", majorVersion: 0, minor: 1),
-        .Package(url: "https://github.com/reactive-swift/ExecutionContext.git", majorVersion: 0, minor: 4),
-        .Package(url: "https://github.com/reactive-swift/Event.git", majorVersion: 0, minor: 1),
+        .Package(url: "https://github.com/reactive-swift/Event.git", majorVersion: 0, minor: 1)
     ]
 )
