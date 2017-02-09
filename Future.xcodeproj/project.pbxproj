@@ -12,6 +12,10 @@
 		6532916B1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
 		6532916C1D006C9000C0A8A2 /* Future+InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */; };
 		65AE34251C988C4200AC1DBA /* ContextSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AE34241C988C4200AC1DBA /* ContextSelector.swift */; };
+		65CED7AE1E4D1666005F301A /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CED7AD1E4D1666005F301A /* Signal.swift */; };
+		65CED7AF1E4D3825005F301A /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CED7AD1E4D1666005F301A /* Signal.swift */; };
+		65CED7B01E4D3826005F301A /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CED7AD1E4D1666005F301A /* Signal.swift */; };
+		65CED7B11E4D3827005F301A /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CED7AD1E4D1666005F301A /* Signal.swift */; };
 		65F0F6DD1C94A0F500E1E59B /* Future.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F0F6D21C94A0F400E1E59B /* Future.framework */; };
 		65F0F6E21C94A0F500E1E59B /* FutureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F6E11C94A0F500E1E59B /* FutureTests.swift */; };
 		65F0F6ED1C94A15900E1E59B /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0F6EC1C94A15900E1E59B /* Future.swift */; };
@@ -186,6 +190,7 @@
 /* Begin PBXFileReference section */
 		653291681D006C9000C0A8A2 /* Future+InvalidationToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Future+InvalidationToken.swift"; sourceTree = "<group>"; };
 		65AE34241C988C4200AC1DBA /* ContextSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextSelector.swift; sourceTree = "<group>"; };
+		65CED7AD1E4D1666005F301A /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		65F0F6D21C94A0F400E1E59B /* Future.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Future.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65F0F6D71C94A0F400E1E59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65F0F6DC1C94A0F500E1E59B /* FutureTests-OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FutureTests-OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -361,6 +366,7 @@
 				65F0F7181C9876EA00E1E59B /* Error.swift */,
 				65F0F71A1C98776E00E1E59B /* Result+.swift */,
 				65FD8F581CDBB6C60046D5D6 /* EventOnce.swift */,
+				65CED7AD1E4D1666005F301A /* Signal.swift */,
 			);
 			path = Future;
 			sourceTree = "<group>";
@@ -742,6 +748,7 @@
 				65F0F7191C9876EA00E1E59B /* Error.swift in Sources */,
 				65FD8F591CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				65F0F7151C98767C00E1E59B /* MutableFuture.swift in Sources */,
+				65CED7AE1E4D1666005F301A /* Signal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -769,6 +776,7 @@
 				92F8AE831CDB590000938F50 /* Error.swift in Sources */,
 				65FD8F5A1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AE801CDB590000938F50 /* Promise.swift in Sources */,
+				65CED7AF1E4D3825005F301A /* Signal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,6 +804,7 @@
 				92F8AEBC1CDB5A1E00938F50 /* Error.swift in Sources */,
 				65FD8F5B1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AEB91CDB5A1E00938F50 /* Promise.swift in Sources */,
+				65CED7B01E4D3826005F301A /* Signal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -823,6 +832,7 @@
 				92F8AEED1CDB5B9700938F50 /* Error.swift in Sources */,
 				65FD8F5C1CDBB6C60046D5D6 /* EventOnce.swift in Sources */,
 				92F8AEEA1CDB5B9700938F50 /* Promise.swift in Sources */,
+				65CED7B11E4D3827005F301A /* Signal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,8 +7,9 @@
 //
 
 import XCTest
-import Boilerplate
 
+import Result
+import Boilerplate
 import ExecutionContext
 import Event
 import Future
@@ -121,6 +122,82 @@ class EventTests: XCTestCase {
         
         self.waitForExpectations(timeout: 1)
     }
+    
+    func getFuture() -> Future<String> {
+        return future {
+            "testString"
+        }
+    }
+    
+    func getFutureFailure() -> Future<String> {
+        return future {
+            throw TestOnceError.some
+        }
+    }
+    
+    let bucket = DisposalBucket()
+    
+    func testFlatMapFuture() {
+        let dataNode = SignalNode<String>()
+        let errorNode = SignalNode<AnyError>()
+        let resultNode = SignalNode<Result<String,AnyError>>()
+        
+        let signalNode = SignalNode<Void>()
+        let signalNode2 = SignalNode<Void>()
+        
+        signalNode.flatMap { [unowned self] in
+            self.getFuture()
+        }.pour(to: resultNode) => bucket
+        
+        signalNode2.flatMap { [unowned self] in
+            self.getFutureFailure()
+        }.pour(to: resultNode) => bucket
+        
+        resultNode.flatMap {
+            $0.value
+        }.pour(to: dataNode) => bucket
+        
+        resultNode.flatMap {
+            $0.error
+        }.pour(to: errorNode) => bucket
+        
+        let es = self.expectation(description: "success")
+        let ef = self.expectation(description: "failure")
+        
+        dataNode.react { data in
+            XCTAssertEqual(data, "testString")
+            es.fulfill()
+        } => bucket
+        
+        errorNode.flatMap {$0.error as? TestOnceError}.react { error in
+            XCTAssertEqual(error, TestOnceError.some)
+            ef.fulfill()
+        } => bucket
+        
+        signalNode <= ()
+        signalNode2 <= ()
+        
+        self.waitForExpectations(timeout: 1, handler: nil)
+    }
+    
+    func testFlatMapFutureSimple() {
+        let signalNode = SignalNode<Void>()
+        
+        let es = self.expectation(description: "success")
+        
+        signalNode.flatMap { [unowned self] in
+            self.getFuture()
+        }.flatMap {
+            $0.value
+        }.react { data in
+            XCTAssertEqual(data, "testString")
+            es.fulfill()
+        } => bucket
+        
+        signalNode <= ()
+        
+        self.waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 #if os(Linux)
@@ -129,6 +206,8 @@ extension EventTests {
 		return [
 			("testOnceSuccess", testOnceSuccess),
 			("testOnceFailed", testOnceFailed),
+			("testFlatMapFuture", testFlatMapFuture),
+			("testFlatMapFutureSimple", testFlatMapFutureSimple),
 		]
 	}
 }
