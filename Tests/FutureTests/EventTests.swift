@@ -198,6 +198,22 @@ class EventTests: XCTestCase {
         
         self.waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    //TODO: add advanced test with all cases, including failure and both Result<> tests
+    func testFutureIndirectionSimple() {
+        let signalNode = SignalNode<String>()
+        
+        let es = self.expectation(description: "success")
+        
+        signalNode.react { data in
+            XCTAssertEqual(data, "testString")
+            es.fulfill()
+        } => bucket
+        
+        signalNode <= getFuture()
+        
+        self.waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 #if os(Linux)
@@ -208,6 +224,7 @@ extension EventTests {
 			("testOnceFailed", testOnceFailed),
 			("testFlatMapFuture", testFlatMapFuture),
 			("testFlatMapFutureSimple", testFlatMapFutureSimple),
+			("testFutureIndirectionSimple", testFutureIndirectionSimple),
 		]
 	}
 }
