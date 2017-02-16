@@ -1120,7 +1120,28 @@ class FutureTests: XCTestCase {
         XCTAssertNil(f1)
         XCTAssertNil(f)
     }
-
+    
+    func testTraverse() {
+        let elements = [1, 2, 3, 4, 5, 6, 100, 1500, 645435]
+        
+        let doubles = elements.settle(in: main).traverse { a in
+            future {
+                return a * 2
+            }
+        }
+        
+        let e = self.expectation()
+        
+        doubles.onSuccess { doubles in
+            for (d, e) in doubles.zipWith(other: elements) {
+                XCTAssertEqual(d, e * 2)
+            }
+            
+            e.fulfill()
+        }
+        
+        self.waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 #if os(Linux)

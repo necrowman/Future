@@ -74,6 +74,22 @@ public class Future<V> : FutureProtocol {
         self.context = context
     }
     
+    public convenience init(context:ExecutionContextProtocol, value:Value) {
+        self.init(context: context, result: Result<Value, AnyError>(value: value))
+    }
+    
+    public convenience init(context:ExecutionContextProtocol, error:Error) {
+        self.init(context: context, result: Result(error: AnyError(error)))
+    }
+    
+    public convenience init<E : Error>(context:ExecutionContextProtocol, result:Result<Value, E>) {
+        self.init(context: context)
+        self.result = result.asAnyError()
+        self.isCompleted = true
+        self._resolver = selectContext()
+        self._chain = nil
+    }
+    
     public required convenience init(value:Value) {
         self.init(result: Result<Value, AnyError>(value: value))
     }
@@ -83,11 +99,7 @@ public class Future<V> : FutureProtocol {
     }
     
     public required convenience init<E : Error>(result:Result<Value, E>) {
-        self.init(context: immediate)
-        self.result = result.asAnyError()
-        self.isCompleted = true
-        self._resolver = selectContext()
-        self._chain = nil
+        self.init(context: immediate, result: result)
     }
     
     private func selectContext() -> ExecutionContextProtocol {
