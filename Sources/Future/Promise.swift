@@ -30,8 +30,12 @@ public class Promise<V> : MutableFutureType {
         }
     }
     
-    public init() {
-        _future = MutableFuture(context: immediate)
+    public init(context:ExecutionContextProtocol) {
+        _future = MutableFuture(context: context)
+    }
+    
+    public convenience init() {
+        self.init(context: immediate)
     }
     
     public func tryComplete<E : Error>(result:Result<Value, E>) -> Bool {
