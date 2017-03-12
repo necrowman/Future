@@ -1,4 +1,4 @@
-//===--- ContextSelector ------------------------------------------------------===//
+//===--- Promise.swift ------------------------------------------------------===//
 //Copyright (c) 2016 Daniel Leping (dileping)
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,30 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-
 import Boilerplate
+import Result
 import ExecutionContext
 
-/// bool is if it is a continuation or initial 'future' call
-public typealias ContextSelector = ()->ExecutionContextType
-
-/// default context selector implementation. Works for most scenarios. Don't change it if you are not 100% sure what you do
-public var contextSelector:ContextSelector = {
-    return global
+public class Promise<V> : MutableFutureType {
+    public typealias Value = V
+    
+    private let _future:MutableFuture<V>
+    
+    public var future:Future<V> {
+        get {
+            return _future
+        }
+    }
+    
+    public init(context:ExecutionContextProtocol) {
+        _future = MutableFuture(context: context)
+    }
+    
+    public convenience init() {
+        self.init(context: immediate)
+    }
+    
+    public func tryComplete<E : Error>(result:Result<Value, E>) -> Bool {
+        return _future.tryComplete(result: result)
+    }
 }

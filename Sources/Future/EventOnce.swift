@@ -21,17 +21,19 @@ import ExecutionContext
 import Result
 import Event
 
-public extension EventEmitterProtocol {
-    public func once<E : EventProtocol>(event: E, failOnError:(ErrorProtocol)->Bool = {_ in true}) -> Future<E.Payload> {
+public extension EventEmitter {
+    public func once<E : Event>(_ event: E, failOnError:@escaping (Error)->Bool = {_ in true}) -> Future<E.Payload> {
         let future = MutableFuture<E.Payload>(context: immediate)
         
         let offEvent = self.on(event).react { payload in
-            future.trySuccess(payload)
+            //yes, suppress the result as event may fire more than once
+            let _ = future.trySuccess(value: payload)
         }
         
         let offError = self.on(.error).react { e in
             if failOnError(e) {
-                future.tryFail(e)
+                //yes, suppress the result as event may fire more than once
+                let _ = future.tryFail(error: e)
             }
         }
         

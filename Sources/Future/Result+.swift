@@ -19,8 +19,10 @@ import Foundation
 import Result
 import Boilerplate
 
+internal typealias SwiftError = Error
+
 internal extension Result {
-    func tryMapError<E : ErrorProtocol>(f:(Error)->E?) -> Result<T, E>? {
+    func tryMapError<E : SwiftError>(_ f:(Error)->E?) -> Result<T, E>? {
         guard let error = self.error else {
             return self.mapError { e in
                 //will never be called
@@ -43,7 +45,7 @@ internal extension Result {
 }
 
 internal extension Result where Error : AnyErrorProtocol {
-    func tryAsError<E : ErrorProtocol>() -> Result<T, E>? {
+    func tryAsError<E : SwiftError>() -> Result<T, E>? {
         return self.tryMapError { e -> E? in
             if let e = asNoBridge(e.error, type:NSError.self).flatMap({$0 as? E}) {
                 return e

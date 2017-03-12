@@ -1,4 +1,4 @@
-//===--- Promise.swift ------------------------------------------------------===//
+//===--- Error.swift ------------------------------------------------------===//
 //Copyright (c) 2016 Daniel Leping (dileping)
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +15,20 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import Boilerplate
-import Result
-import ExecutionContext
 
-public class Promise<V> : MutableFutureType {
-    public typealias Value = V
-    
-    private let _future:MutableFuture<V>
-    
-    public var future:Future<V> {
-        get {
-            return _future
-        }
-    }
-    
-    public init() {
-        _future = MutableFuture(context: immediate)
-    }
-    
-    public func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
-        return _future.tryComplete(result)
+import Boilerplate
+
+public enum FutureError : Error {
+    case AlreadyCompleted
+    case MappedNil
+    case FilteredOut
+}
+
+internal func anyError(_ e:Error) -> AnyError {
+    switch e {
+    case let error as AnyError:
+        return error
+    default:
+        return AnyError(e)
     }
 }

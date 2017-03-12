@@ -23,16 +23,16 @@ import ExecutionContext
 public protocol MutableFutureType {
     associatedtype Value
     
-    func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool
+    func tryComplete<E : Error>(result:Result<Value, E>) -> Bool
 }
 
 internal class MutableFuture<V> : Future<V>, MutableFutureType {
-    internal override init(context:ExecutionContextType) {
+    internal override init(context:ExecutionContextProtocol) {
         super.init(context: context)
     }
     
-    internal func tryComplete<E : ErrorProtocol>(result:Result<Value, E>) -> Bool {
-        if self.result != nil {
+    internal func tryComplete<E : Error>(result:Result<Value, E>) -> Bool {
+        if nil != self.result {
             return false
         }
         
@@ -42,37 +42,38 @@ internal class MutableFuture<V> : Future<V>, MutableFutureType {
 }
 
 public extension MutableFutureType {
-    func complete<E : ErrorProtocol>(result:Result<Value, E>) throws {
-        if !tryComplete(result) {
-            throw Error.AlreadyCompleted
+    func complete<E : Error>(result:Result<Value, E>) throws {
+        if !tryComplete(result: result) {
+            throw FutureError.AlreadyCompleted
         }
     }
     
     func trySuccess(value:Value) -> Bool {
-        return tryComplete(Result<Value, AnyError>(value:value))
+        return tryComplete(result: Result<Value, AnyError>(value:value))
     }
     
     func success(value:Value) throws {
-        if !trySuccess(value) {
-            throw Error.AlreadyCompleted
+        if !trySuccess(value: value) {
+            throw FutureError.AlreadyCompleted
         }
     }
     
-    func tryFail(error:ErrorProtocol) -> Bool {
-        return tryComplete(Result(error: anyError(error)))
+    func tryFail(error:Error) -> Bool {
+        return tryComplete(result: Result(error: anyError(error)))
     }
     
-    func fail(error:ErrorProtocol) throws {
-        if !tryFail(error) {
-            throw Error.AlreadyCompleted
+    func fail(error:Error) throws {
+        if !tryFail(error: error) {
+            throw FutureError.AlreadyCompleted
         }
     }
     
     
     /// safe to be called several times
-    func completeWith<F: FutureType where F.Value == Value>(f:F) {
-        f.onComplete { (result:Result<Value, AnyError>) in
-            self.tryComplete(result)
+    func completeWith<F: FutureProtocol>(future:F) where F.Value == Value {
+        future.onComplete { (result:Result<Value, AnyError>) in
+            //yes, suppress (we might have multiple complete with statements)
+            let _ = self.tryComplete(result: result)
         }
     }
 }

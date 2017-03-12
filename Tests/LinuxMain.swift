@@ -1,9 +1,9 @@
 import XCTest
 
-@testable import FutureTestSuite
+import FutureTests
 
-XCTMain([
-	testCase(EventTests.allTests),
-	testCase(FutureTests.allTests),
-	testCase(PromiseTests.allTests),
-])
+var tests = [XCTestCaseEntry]()
+
+tests += FutureTests.allTests()
+
+XCTMain(tests)

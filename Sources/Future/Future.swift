@@ -15,39 +15,44 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+
 import Result
 import Boilerplate
 import ExecutionContext
 
-public protocol FutureType : ExecutionContextTenantProtocol {
+public protocol FutureProtocol : MovableExecutionContextTenantProtocol {
     associatedtype Value
+    //Can not workaround as a protocol, because protocol can't set itself as a requirement
+    typealias SettledTenant = Future<Value>
     
     init(value:Value)
-    init(error:ErrorProtocol)
-    init<E : ErrorProtocol>(result:Result<Value, E>)
+    init(error:Error)
+    init<E : Error>(result:Result<Value, E>)
     
-    func onComplete<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self
+    @discardableResult
+    func onComplete<E: Error>(_ callback: @escaping (Result<Value, E>) -> Void) -> Self
     
     var isCompleted:Bool {get}
 }
 
-public class Future<V> : FutureType {
+public class Future<V> : FutureProtocol {
     public typealias Value = V
     
-    private let chain:TaskChain
-    private var _resolver:ExecutionContextType?
+    private var _chain:TaskChain?
+    private var _resolver:ExecutionContextProtocol?
     internal var result:Result<Value, AnyError>? = nil {
         didSet {
-            if result != nil {
+            if nil != result {
                 self.isCompleted = true
                 
                 /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                 let context = selectContext()
                 
-                chain.append { next in
+                _chain!.append { next in
                     return { context in
                         admin.execute {
                             self._resolver = context
+                            self._chain = nil
                             context.execute {
                                 next.content?(context)
                             }
@@ -55,40 +60,59 @@ public class Future<V> : FutureType {
                     }
                 }
                 
-                chain.perform(context)
+                _chain!.perform(in: context)
             }
         }
     }
     
-    public let context: ExecutionContextType
+    public let context: ExecutionContextProtocol
     //make it atomic later
     private (set) public var isCompleted:Bool = false
     
-    internal init(context:ExecutionContextType) {
-        self.chain = TaskChain()
+    internal init(context:ExecutionContextProtocol) {
+        self._chain = TaskChain()
         self.context = context
+    }
+    
+    public convenience init(context:ExecutionContextProtocol, value:Value) {
+        self.init(context: context, result: Result<Value, AnyError>(value: value))
+    }
+    
+    public convenience init(context:ExecutionContextProtocol, error:Error) {
+        self.init(context: context, result: Result(error: AnyError(error)))
+    }
+    
+    public convenience init<E : Error>(context:ExecutionContextProtocol, result:Result<Value, E>) {
+        self.init(context: context)
+        self.result = result.asAnyError()
+        self.isCompleted = true
+        self._resolver = selectContext()
+        self._chain = nil
     }
     
     public required convenience init(value:Value) {
         self.init(result: Result<Value, AnyError>(value: value))
     }
     
-    public required convenience init(error:ErrorProtocol) {
+    public required convenience init(error:Error) {
         self.init(result: Result(error: AnyError(error)))
     }
     
-    public required convenience init<E : ErrorProtocol>(result:Result<Value, E>) {
-        self.init(context: immediate)
-        self.result = result.asAnyError()
-        self.isCompleted = true
-        self._resolver = selectContext()
+    public required convenience init<E : Error>(result:Result<Value, E>) {
+        self.init(context: immediate, result: result)
     }
     
-    private func selectContext() -> ExecutionContextType {
-        return self.context.isEqualTo(immediate) ? ExecutionContext.current : self.context
+    private func selectContext() -> ExecutionContextProtocol {
+        return self.context.isEqual(to: immediate) ? ExecutionContext.current : self.context
     }
     
-    public func onComplete<E: ErrorProtocol>(callback: Result<Value, E> -> Void) -> Self {
+    @discardableResult
+    public func onComplete<E: Error>(_ callback: @escaping (Result<Value, E>) -> Void) -> Self {
+        return self.onCompleteInternal(callback: callback)
+    }
+    
+    //to avoid endless recursion
+    internal func onCompleteInternal<E: Error>(callback: @escaping (Result<Value, E>) -> Void) -> Self {
         admin.execute {
             if let resolver = self._resolver {
                 let mapped:Result<Value, E>? = self.result!.tryAsError()
@@ -98,7 +122,7 @@ public class Future<V> : FutureType {
                     }
                 }
             } else {
-                self.chain.append { next in
+                self._chain!.append { next in
                     return { context in
                         let mapped:Result<Value, E>? = self.result!.tryAsError()
                         
@@ -120,46 +144,46 @@ public class Future<V> : FutureType {
 extension Future : MovableExecutionContextTenantProtocol {
     public typealias SettledTenant = Future<Value>
     
-    public func settle(in context: ExecutionContextType) -> SettledTenant {
+    public func settle(in context: ExecutionContextProtocol) -> SettledTenant {
         let future = MutableFuture<Value>(context: context)
         
-        future.completeWith(self)
+        future.completeWith(future: self)
         
         return future
     }
 }
 
-public func future<T>(context:ExecutionContextType = contextSelector(), task:() throws ->T) -> Future<T> {
+public func future<T>(context:ExecutionContextProtocol = contextSelector(), _ task:@escaping () throws ->T) -> Future<T> {
     let future = MutableFuture<T>(context: context)
     
     context.execute {
         do {
             let value = try task()
-            try! future.success(value)
+            try! future.success(value: value)
         } catch let e {
-            try! future.fail(e)
+            try! future.fail(error: e)
         }
     }
     
     return future
 }
 
-public func future<T, E : ErrorProtocol>(context:ExecutionContextType = contextSelector(), task:() -> Result<T, E>) -> Future<T> {
+public func future<T, E : Error>(context:ExecutionContextProtocol = contextSelector(), _ task:@escaping () -> Result<T, E>) -> Future<T> {
     let future = MutableFuture<T>(context: context)
     
     context.execute {
         let result = task()
-        try! future.complete(result)
+        try! future.complete(result: result)
     }
     
     return future
 }
 
-public func future<T, F : FutureType where F.Value == T>(context:ExecutionContextType = contextSelector(), task:() -> F) -> Future<T> {
+public func future<T, F : FutureProtocol>(context:ExecutionContextProtocol = contextSelector(), _ task:@escaping () -> F) -> Future<T> where F.Value == T {
     let future = MutableFuture<T>(context: context)
     
     context.execute {
-        future.completeWith(task())
+        future.completeWith(future: task())
     }
     
     return future

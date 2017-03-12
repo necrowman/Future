@@ -1,4 +1,4 @@
-//===--- Error.swift ------------------------------------------------------===//
+//===--- ContextSelector ------------------------------------------------------===//
 //Copyright (c) 2016 Daniel Leping (dileping)
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,17 +17,12 @@
 import Foundation
 
 import Boilerplate
+import ExecutionContext
 
-public enum Error : ErrorProtocol {
-    case AlreadyCompleted
-    case MappedNil
-}
+/// bool is if it is a continuation or initial 'future' call
+public typealias ContextSelector = ()->ExecutionContextProtocol
 
-internal func anyError(e:ErrorProtocol) -> AnyError {
-    switch e {
-    case let error as AnyError:
-        return error
-    default:
-        return AnyError(e)
-    }
+/// default context selector implementation. Works for most scenarios. Don't change it if you are not 100% sure what you do
+public var contextSelector:ContextSelector = {
+    return global
 }
