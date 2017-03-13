@@ -44,6 +44,7 @@ public class Future<V> : FutureProtocol {
         didSet {
             if nil != result {
                 self.isCompleted = true
+                
                 /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                 let context = selectContext()
                 let chain = _chain!
@@ -60,7 +61,6 @@ public class Future<V> : FutureProtocol {
                             }
                         }
                     }
-                    
                     chain.perform(in: context)
                 }
             }
