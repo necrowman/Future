@@ -43,17 +43,12 @@ public class Future<V> : FutureProtocol {
     internal var result:Result<Value, AnyError>? = nil {
         didSet {
             if nil != result {
-                
-                //TODO: still doubt where to change this
                 self.isCompleted = true
-                //ExecutionContext.current is there.
+                /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                 let context = self.selectContext()
                 let chain = _chain!
                 
                 admin.execute {
-                    
-                    /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
-                    
                     chain.append { next in
                         return { context in
                             admin.execute {
@@ -94,7 +89,6 @@ public class Future<V> : FutureProtocol {
         self.result = result.asAnyError()
         self.isCompleted = true
         self._resolver = selectContext()
-         //TODO: This might lead to crash!! See unwrap logic in didSet
         self._chain = nil
     }
     

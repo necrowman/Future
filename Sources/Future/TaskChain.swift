@@ -36,22 +36,16 @@ internal class TaskChain {
     }
     
     func perform(in context:ExecutionContextProtocol) {
-        //TODO: As far as we moved all sync logic to future - we don't need this anymore
-        //admin.execute {
-            context.execute {
-                self.head(context)
-            }
-        //}
+        context.execute {
+            self.head(context)
+        }
     }
     
     /// you have to handle calling next yourself
     func append(_ f:(AnyContainer<ContextTask?>)->ContextTask) {
         let tail = MutableAnyContainer<ContextTask?>(nil)
         let task = f(tail)
-        //TODO: As far as we moved all sync logic to future - we don't need this anymore
-        //admin.execute {
-            self.nextTail.content = task
-            self.nextTail = tail
-        //}
+        nextTail.content = task
+        nextTail = tail
     }
 }
