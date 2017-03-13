@@ -48,11 +48,13 @@ public class Future<V> : FutureProtocol {
                 self.isCompleted = true
                 //ExecutionContext.current is there.
                 let context = self.selectContext()
-                main.execute {
+                let chain = _chain!
+                
+                admin.execute {
                     
                     /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                     
-                    self._chain!.append { next in
+                    chain.append { next in
                         return { context in
                             admin.execute {
                                 self._resolver = context
@@ -64,7 +66,7 @@ public class Future<V> : FutureProtocol {
                         }
                     }
                     
-                    self._chain!.perform(in: context)
+                    chain.perform(in: context)
                 }
             }
         }
