@@ -36,10 +36,8 @@ internal class TaskChain {
     }
     
     func perform(in context:ExecutionContextProtocol) {
-        admin.execute {
-            context.execute {
-                self.head(context)
-            }
+        context.execute {
+            self.head(context)
         }
     }
     
@@ -47,9 +45,7 @@ internal class TaskChain {
     func append(_ f:(AnyContainer<ContextTask?>)->ContextTask) {
         let tail = MutableAnyContainer<ContextTask?>(nil)
         let task = f(tail)
-        admin.execute {
-            self.nextTail.content = task
-            self.nextTail = tail
-        }
+        nextTail.content = task
+        nextTail = tail
     }
 }

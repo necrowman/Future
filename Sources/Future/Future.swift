@@ -47,20 +47,22 @@ public class Future<V> : FutureProtocol {
                 
                 /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
                 let context = selectContext()
+                let chain = _chain!
                 
-                _chain!.append { next in
-                    return { context in
-                        admin.execute {
-                            self._resolver = context
-                            self._chain = nil
-                            context.execute {
-                                next.content?(context)
+                admin.execute {
+                    chain.append { next in
+                        return { context in
+                            admin.execute {
+                                self._resolver = context
+                                self._chain = nil
+                                context.execute {
+                                    next.content?(context)
+                                }
                             }
                         }
                     }
+                    chain.perform(in: context)
                 }
-                
-                _chain!.perform(in: context)
             }
         }
     }
