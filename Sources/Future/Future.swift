@@ -43,24 +43,29 @@ public class Future<V> : FutureProtocol {
     internal var result:Result<Value, AnyError>? = nil {
         didSet {
             if nil != result {
+                
+                //TODO: still doubt where to change this
                 self.isCompleted = true
-                
-                /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
-                let context = selectContext()
-                
-                _chain!.append { next in
-                    return { context in
-                        admin.execute {
-                            self._resolver = context
-                            self._chain = nil
-                            context.execute {
-                                next.content?(context)
+                //ExecutionContext.current is there.
+                let context = self.selectContext()
+                main.execute {
+                    
+                    /// some performance optimization is done here, so don't touch the ifs. ExecutionContext.current is not the fastest func
+                    
+                    self._chain!.append { next in
+                        return { context in
+                            admin.execute {
+                                self._resolver = context
+                                self._chain = nil
+                                context.execute {
+                                    next.content?(context)
+                                }
                             }
                         }
                     }
+                    
+                    self._chain!.perform(in: context)
                 }
-                
-                _chain!.perform(in: context)
             }
         }
     }
@@ -87,6 +92,7 @@ public class Future<V> : FutureProtocol {
         self.result = result.asAnyError()
         self.isCompleted = true
         self._resolver = selectContext()
+         //TODO: This might lead to crash!! See unwrap logic in didSet
         self._chain = nil
     }
     
