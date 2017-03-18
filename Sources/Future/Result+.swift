@@ -39,7 +39,7 @@ internal extension Result {
     
     func asAnyError() -> Result<T, AnyError> {
         return self.mapError { error in
-            return anyError(error)
+            return AnyError(error)
         }
     }
 }

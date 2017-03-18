@@ -19,16 +19,7 @@ import Foundation
 import Boilerplate
 
 public enum FutureError : Error {
-    case AlreadyCompleted
-    case MappedNil
-    case FilteredOut
-}
-
-internal func anyError(_ e:Error) -> AnyError {
-    switch e {
-    case let error as AnyError:
-        return error
-    default:
-        return AnyError(e)
-    }
+    case alreadyCompleted
+    case mappedNil
+    case filteredOut
 }

@@ -62,7 +62,7 @@ public extension FutureProtocol {
         
         self.onComplete { (result:Result<Value, AnyError>) in
             let result = result.flatMap { value -> Result<B, AnyError> in
-                materializeAny {
+                materialize {
                     try f(value)
                 }
             }
@@ -110,7 +110,7 @@ public extension FutureProtocol {
         self.onComplete { (result:Result<Value, AnyError>) in
             let result:Result<B, AnyError> = result.flatMap { value in
                 guard let b = f(value) else {
-                    return Result(error: AnyError(FutureError.MappedNil))
+                    return Result(error: AnyError(FutureError.mappedNil))
                 }
                 return Result(value: b)
             }
@@ -128,7 +128,7 @@ public extension FutureProtocol {
                 if f(value) {
                     try! future.success(value: value)
                 } else {
-                    try! future.fail(error: FutureError.FilteredOut)
+                    try! future.fail(error: FutureError.filteredOut)
                 }
                 }, ifFailure: { error in
                     try! future.fail(error: error)
@@ -148,8 +148,8 @@ public extension FutureProtocol {
         let future = MutableFuture<Value>(context: self.context)
         
         self.onComplete { (result:Result<Value, E>) in
-            let result = result.flatMapError { error in
-                return materializeAny {
+            let result = result.flatMapError { error -> Result<Value, AnyError> in
+                return materialize {
                     try f(error)
                 }
             }
@@ -167,8 +167,8 @@ public extension FutureProtocol {
         let future = MutableFuture<Value>(context: self.context)
         
         self.onComplete { (result:Result<Value, AnyError>) in
-            let result = result.flatMapError { error in
-                return materializeAny {
+            let result = result.flatMapError { error -> Result<Value, AnyError> in
+                return materialize {
                     try f(error.error)
                 }
             }

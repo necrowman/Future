@@ -44,7 +44,7 @@ internal class MutableFuture<V> : Future<V>, MutableFutureType {
 public extension MutableFutureType {
     func complete<E : Error>(result:Result<Value, E>) throws {
         if !tryComplete(result: result) {
-            throw FutureError.AlreadyCompleted
+            throw FutureError.alreadyCompleted
         }
     }
     
@@ -54,17 +54,17 @@ public extension MutableFutureType {
     
     func success(value:Value) throws {
         if !trySuccess(value: value) {
-            throw FutureError.AlreadyCompleted
+            throw FutureError.alreadyCompleted
         }
     }
     
     func tryFail(error:Error) -> Bool {
-        return tryComplete(result: Result(error: anyError(error)))
+        return tryComplete(result: Result(error: AnyError(error)))
     }
     
     func fail(error:Error) throws {
         if !tryFail(error: error) {
-            throw FutureError.AlreadyCompleted
+            throw FutureError.alreadyCompleted
         }
     }
     

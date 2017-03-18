@@ -463,7 +463,7 @@ class FutureTests: XCTestCase {
         
         let e = self.expectation()
         f.onFailure { (err:FutureError) in
-            XCTAssertEqual(err, FutureError.FilteredOut)
+            XCTAssertEqual(err, FutureError.filteredOut)
             e.fulfill()
         }
         
@@ -753,7 +753,7 @@ class FutureTests: XCTestCase {
         let e = self.expectation()
         
         Future<Int>(value: 3).filter { $0 > 5}.onComplete { (result:Result<Int, FutureError>) in
-            XCTAssertEqual(result.error!, FutureError.FilteredOut, "filter should yield no result")
+            XCTAssertEqual(result.error!, FutureError.filteredOut, "filter should yield no result")
             e.fulfill()
         }
         
