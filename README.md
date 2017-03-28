@@ -57,7 +57,7 @@ Run `carthage update` and follow the steps as described in Carthage's [README](h
 
 ## Roadmap
 
-* v0.2.0: stable release (once we will see that no issues are coming)
+* v0.2.0-alpha.2: stable release (once we will see that no issues are coming)
 
 ## Changelog
 
