@@ -1,9 +1,12 @@
 ## Changelog
 
-* v0.2.0-alpha.2
+* v0.2.0-alpha.3
 	* swift 3.0 support (use 0.1.0 if you still need Swift 2.x)
 	* Improved README
 	* Added documentation
+	* added changelog version
+* v0.2.0-alpha.2
+	* updated versions + fixes
 * v0.2.0-alpha.1
 	* cleaned code
 	* fixed queue
