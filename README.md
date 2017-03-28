@@ -55,6 +55,26 @@ Run `carthage update` and follow the steps as described in Carthage's [README](h
 
 ### Examples
 
+#### Initialization Future:
+
+```swift
+	import Future
+
+	let f = Future<Int>(value: 2)
+
+	f.onComplete { result in
+        //complete block executes after .onSuccess or .onFailure execution
+    }
+        
+    f.onSuccess { value in
+        //successful block execution
+    }
+    
+    f.onFailure { _ in
+    	//failure block execution
+    }
+```
+
 ## Roadmap
 
 * v0.2.0-alpha.2: stable release (once we will see that no issues are coming)
