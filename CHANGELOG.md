@@ -5,8 +5,12 @@
 	* Improved README
 	* Added documentation
 * v0.2.0-alpha.1
-	* starting implementing swift 3.0 support
+	* cleaned code
+	* fixed queue
+	* fixed race condition and stress test
+	* updated to alpha
 * v0.1.0
+	* updated versions
 	* extended promises construction
 	* implemented traverse
 	* Future indirection to endpoints
