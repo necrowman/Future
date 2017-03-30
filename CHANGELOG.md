@@ -2,7 +2,8 @@
 
 * v0.2.0-alpha.3
 	* swift 3.0 support (use 0.1.0 if you still need Swift 2.x)
-	* updated CHANGELOG.md file in v0.2.0-alpha.3 sectio
+	* added example of using with Alomofire (via promise);
+	* updated CHANGELOG.md file in v0.2.0-alpha.3 sectio;
 	* updated CHANGELOG.md file in v0.2.0-alpha.2 section;
 	* updated CHANGELOG.md file in v0.2.0-alpha.1 section;
 	* updated CHANGELOG.md file for v0.1.0 section description;

@@ -84,25 +84,25 @@ import Future
 import Alamofire
 ...
 func useAlamofire(url: String) -> Future<String> {
-    let promise = Promise<String>()				//create Promise        
+    let promise = Promise<String>()                //create Promise        
     Alamofire.request(url).responseString { (response) in 
         switch response.result {
         case .success(let answer):
-            try! promise.success(value: answer) 	//throw promise.success
+            try! promise.success(value: answer)    //throw promise.success
         case .failure(let error):
-            try! promise.fail(error: error) 		//throw promise.fail
+            try! promise.fail(error: error)        //throw promise.fail
         }    
     }
     return promise.future
 }
 ...
 useAlamofire(url: "https://httpbin.org/ip")
-.onSuccess { result in 						//success event observing
-   	print("result: => ", result)
-}.onFailure { (error) in 					//failure event observing
-	print("error: => ", error.localizedDescription)
-}.onComplete { (result) in 					//after success or failure event observing
-	print("completed with value: \(result.value ?? "") and error \(result.error?.localizedDescription ?? "")" )
+.onSuccess { result in                             //success event observing
+    print("result: => ", result)
+}.onFailure { (error) in                           //failure event observing
+    print("error: => ", error.localizedDescription)
+}.onComplete { (result) in                         //after success or failure event observing
+    print("completed with value: \(result.value ?? "") and error \(result.error?.localizedDescription ?? "")" )
 }
 ```
 
