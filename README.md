@@ -84,27 +84,60 @@ import Future
 import Alamofire
 ...
 func useAlamofire(url: String) -> Future<String> {
-    let promise = Promise<String>()                //create Promise        
+    let promise = Promise<String>()             //create Promise        
     Alamofire.request(url).responseString { (response) in 
         switch response.result {
         case .success(let answer):
-            try! promise.success(value: answer)    //throw promise.success
+            try! promise.success(value: answer) //throw promise.success
         case .failure(let error):
-            try! promise.fail(error: error)        //throw promise.fail
+            try! promise.fail(error: error)     //throw promise.fail
         }    
     }
     return promise.future
 }
 ...
 useAlamofire(url: "https://httpbin.org/ip")
-.onSuccess { result in                             //success event observing
+.onSuccess { result in                          //success event observing
     print("result: => ", result)
-}.onFailure { (error) in                           //failure event observing
+}.onFailure { (error) in                        //failure event observing
     print("error: => ", error.localizedDescription)
-}.onComplete { (result) in                         //after success or failure event observing
+}.onComplete { (result) in                      //after success or failure event observing
     print("completed with value: \(result.value ?? "") and error \(result.error?.localizedDescription ?? "")" )
 }
 ```
+
+##### Example with animation
+
+```swift
+@IBOutlet weak var height: NSLayoutConstraint!
+...
+func changeHeight(newHeight: CGFloat, after: TimeInterval) -> Future<Bool> {
+    let promise = Promise<Bool>()
+    UIView.animate(withDuration: after, animations: { 
+        self.height.constant = newHeight
+        self.view.layoutIfNeeded()
+    }) { (completed) in
+        if completed {         //return completion animation status
+            try! promise.success(value: completed)
+        } else {               //generate interuption error
+            let error: Error = NSError(domain: "Animation stopped, was interrupted", code: 500, userInfo: nil)
+            try! promise.fail(error: error)
+        }
+    }
+    return promise.future
+}
+...
+changeHeight(newHeight: 0, after: 1)
+    .onComplete { (result) in  //after succesful animation
+        print("animation status: ", result.value!)
+    }.onFailure { (error) in   //after failure animation
+        print("animation error: ", error.localizedDescription)
+    }.onComplete { (result) in //after getting animation result
+        print("finished with status: ", result.value ?? "")
+        print("finished with error: ", result.error?.localizedDescription ?? "")
+}
+
+``` 
 
 ## Roadmap
 
