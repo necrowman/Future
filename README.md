@@ -109,32 +109,25 @@ useAlamofire(url: "https://httpbin.org/ip")
 ##### Example with animation
 
 ```swift
-@IBOutlet weak var height: NSLayoutConstraint!
-...
-func changeHeight(newHeight: CGFloat, after: TimeInterval) -> Future<Bool> {
-    let promise = Promise<Bool>()
-    UIView.animate(withDuration: after, animations: { 
-        self.height.constant = newHeight
-        self.view.layoutIfNeeded()
-    }) { (completed) in
-        if completed {         //return completion animation status
+extension UIView {
+    class func animate(duration: TimeInterval, animations: @escaping () -> Void)->Future<Bool> {
+        let promise = Promise<Bool>()
+        UIView.animate(withDuration: duration, animations: animations) { completed in
             try! promise.success(value: completed)
-        } else {               //generate interuption error
-            let error: Error = NSError(domain: "Animation stopped, was interrupted", code: 500, userInfo: nil)
-            try! promise.fail(error: error)
         }
+        return promise.future
     }
-    return promise.future
 }
 ...
-changeHeight(newHeight: 0, after: 1)
-    .onComplete { (result) in  //after succesful animation
-        print("animation status: ", result.value!)
-    }.onFailure { (error) in   //after failure animation
-        print("animation error: ", error.localizedDescription)
-    }.onComplete { (result) in //after getting animation result
-        print("finished with status: ", result.value ?? "")
-        print("finished with error: ", result.error?.localizedDescription ?? "")
+@IBOutlet weak var height: NSLayoutConstraint!
+...
+func hide() {
+    UIView.animate(duration: 0.3) {
+        self.height.constant = 30
+        self.view.layoutIfNeeded()
+    }.onSuccess { completed in
+        self.view.alpha = 0
+    }
 }
 
 ``` 

@@ -2,6 +2,7 @@
 
 * v0.2.0-alpha.3
 	* swift 3.0 support (use 0.1.0 if you still need Swift 2.x)
+	* changed example for using promise with animation;
 	* added example with animation;
 	* added example of using with Alomofire (via promise);
 	* updated CHANGELOG.md file in v0.2.0-alpha.3 sectio;
