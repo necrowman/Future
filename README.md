@@ -58,21 +58,39 @@ Run `carthage update` and follow the steps as described in Carthage's [README](h
 #### Initialization Future:
 
 ```swift
-import Future
-
-let f = Future<Int>(value: 2)
-
-f.onComplete { result in
-	//complete block executes after .onSuccess or .onFailure execution
+let f1 = Future(value: 2) // Creates future with value 2
+f1.onSuccess{ val in
+    print(val) // Wil be printed immediately
+    
 }
 
-f.onSuccess { value in
-	//successful block execution
+let f2 = Future<Int>(error: CustomErrors.err1)//Creates failed future with given error
+f2.onFailure { err in
+    print(err)
 }
 
-f.onFailure { _ in
-	//failure block execution
+let f3 = future{ () -> Int in 
+    usleep(1100000) // Sleeps 1.1 sec
+    return 10
+} // Creates future which will be asyncronously resolved by value 10
+
+f3.onSuccess{ val in
+    print(val) // Will be printed asyncronusly in 1 sec
 }
+
+let f4 = future{ () -> Int in
+    sleep(1) // Sleeps 1 sec
+    throw CustomErrors.err2
+} // Creates future which will be asyncronously resolved by value 10
+f4.onFailure{ err in
+    print(err) // Will print error asyncronusly in 1 sec
+}
+
+let promise = Promise<Int>()
+promise.future.onSuccess{ val in
+    print(val) // Will be printed after resolving the promise
+}
+promise.trySuccess(value: 20) // prints "20"
 ```
 
 #### Basic usage
@@ -80,9 +98,6 @@ f.onFailure { _ in
 #####  Example with Alamofire (using promise)
 
 ```swift
-import Future
-import Alamofire
-...
 func useAlamofire(url: String) -> Future<String> {
     let promise = Promise<String>()             //create Promise        
     Alamofire.request(url).responseString { (response) in 
@@ -110,7 +125,7 @@ useAlamofire(url: "https://httpbin.org/ip")
 
 ```swift
 extension UIView {
-    class func animate(duration: TimeInterval, animations: @escaping () -> Void)->Future<Bool> {
+    class func animate(duration: TimeInterval, animations: @escaping () -> Void) -> Future<Bool> {
         let promise = Promise<Bool>()
         UIView.animate(withDuration: duration, animations: animations) { completed in
             try! promise.success(value: completed)
@@ -118,9 +133,9 @@ extension UIView {
         return promise.future
     }
 }
+
 ...
-@IBOutlet weak var height: NSLayoutConstraint!
-...
+
 func hide() {
     UIView.animate(duration: 0.3) {
         self.height.constant = 30
