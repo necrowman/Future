@@ -2,6 +2,7 @@
 
 * v0.2.0-alpha.3
 	* swift 3.0 support (use 0.1.0 if you still need Swift 2.x)
+	* added using comliteWith function example;
 	* added Advanced usage example section; added "contexts, settled function" usage example;
 	* changed initialization future description;
 	* changed example for using promise with animation;

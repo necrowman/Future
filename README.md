@@ -181,6 +181,18 @@ fMain.onComplete { val in
 }
 ```
 
+##### using comliteWith function
+
+```swift
+let promise = Promise<String>()
+promise.completeWith(future: future { // Promise will be resolved as soon as Future
+    return "Hello!"
+})
+promise.future.onSuccess { val in
+    print(val)
+}
+```
+
 ## Roadmap
 
 * v0.2.0-alpha.2: stable release (once we will see that no issues are coming)
