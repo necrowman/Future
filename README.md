@@ -61,7 +61,6 @@ Run `carthage update` and follow the steps as described in Carthage's [README](h
 let f1 = Future(value: 2) // Creates future with value 2
 f1.onSuccess{ val in
     print(val) // Wil be printed immediately
-    
 }
 
 let f2 = Future<Int>(error: CustomErrors.err1)//Creates failed future with given error
