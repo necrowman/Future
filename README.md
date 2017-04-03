@@ -57,18 +57,28 @@ Run `carthage update` and follow the steps as described in Carthage's [README](h
 
 #### Initialization Future:
 
+##### Initialization Future with value:
+
 ```swift
 let f1 = Future(value: 2) // Creates future with value 2
 f1.onSuccess{ val in
     print(val) // Wil be printed immediately
 }
+```
 
+##### Initialization Future with error:
+
+```swift
 let f2 = Future<Int>(error: CustomErrors.err1)//Creates failed future with given error
 f2.onFailure { err in
     print(err)
 }
+```
 
-let f3 = future{ () -> Int in 
+##### Initialization Future via “future” function
+
+```swift
+let f3 = future { () -> Int in 
     usleep(1100000) // Sleeps 1.1 sec
     return 10
 } // Creates future which will be asyncronously resolved by value 10
@@ -84,7 +94,11 @@ let f4 = future{ () -> Int in
 f4.onFailure{ err in
     print(err) // Will print error asyncronusly in 1 sec
 }
+```
 
+##### Initialization Future via Promise
+
+```swift
 let promise = Promise<Int>()
 promise.future.onSuccess{ val in
     print(val) // Will be printed after resolving the promise
@@ -144,7 +158,28 @@ func hide() {
     }
 }
 
-``` 
+```
+
+#### Advanced usage
+
+##### Contexts, settled function
+
+```swift
+let fGlobal = ExecutionContext.global.sync {
+    future { // create future in .global ExecutionContext;
+        print(10)
+    }
+}
+fGlobal.onComplete { val in
+    print("value: ", val.value ?? 0) // proceed value in .global ExecutionContext;
+}
+
+let fMain = fGlobal.settle(in: ExecutionContext.main) // create settler for .main context
+                                                      // now future can proceed in both contexts;
+fMain.onComplete { val in
+    print("value: ", val.value ?? 0) // proceed value in .main ExecutionContext;
+}
+```
 
 ## Roadmap
 
