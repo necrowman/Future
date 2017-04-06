@@ -196,9 +196,15 @@ promise.future.onSuccess { val in
 ##### Using recover function
 
 ```swift
+//using recover
 let f = Future<Int>(error: CustomErrors.err1)
-let recoveredF = f.recover { (err) -> Int in // return new Future with value 404 if error
+let recoveredFuture = f.recover { (err) -> Int in // return new Future with value 404 if error
     return 404
+}
+
+//using recoverWith
+let recoveredFuture2 = f.recoverWith { (err) -> Future<Int> in // return new Future with value 300 if error
+	return Future<Int>(value: 300)
 }
 ```
 
