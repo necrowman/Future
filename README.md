@@ -181,7 +181,7 @@ fMain.onComplete { val in
 }
 ```
 
-##### using comliteWith function
+##### Using compliteWith function
 
 ```swift
 let promise = Promise<String>()
@@ -190,6 +190,15 @@ promise.completeWith(future: future { // Promise will be resolved as soon as Fut
 })
 promise.future.onSuccess { val in
     print(val)
+}
+```
+
+##### Using recover function
+
+```swift
+let f = Future<Int>(error: CustomErrors.err1)
+let recoveredF = f.recover { (err) -> Int in // return new Future with value 404 if error
+    return 404
 }
 ```
 
