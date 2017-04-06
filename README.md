@@ -204,7 +204,40 @@ let recoveredFuture = f.recover { (err) -> Int in // return new Future with valu
 
 //using recoverWith
 let recoveredFuture2 = f.recoverWith { (err) -> Future<Int> in // return new Future with value 300 if error
-	return Future<Int>(value: 300)
+	return future { () -> Int in 
+	    return 300
+	}
+}
+```
+
+##### Exception handling
+
+Handling exception in Future initialization
+
+```swift
+//throw exception in future initialization
+let f = future {
+    throw CustomErrors.err1 
+}
+f.onFailure { (err) in 
+    print(err)
+}
+```
+
+Handling exception in map function
+
+```swift
+let f = future {
+    return "20ggg"
+}
+//throw exception in mapping future
+f.map { (val:String) throws -> Int in
+	guard let res = Int(val) else {
+	    throw CustomErrors.err1
+	}
+	return res
+}.onFailure { err in
+    print(err)
 }
 ```
 
